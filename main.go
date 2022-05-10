@@ -46,7 +46,7 @@ func main() {
 	//article routes
 	r.POST("/api/v1/article", middles.TokenAuthMiddleware(hdl.TokenValid), hdl.InsertArticle)
 	r.GET("/api/v1/articles", middles.CachePage(cache.DefaultStore, time.Minute), hdl.QueryArticle)
-	r.GET("/api/v1/article/:id", middles.TokenAuthMiddleware(hdl.TokenValid), middles.CachePage(cache.DefaultStore, time.Minute), hdl.QueryArticleDetail)
+	r.GET("/api/v1/article/:id", middles.CachePage(cache.DefaultStore, time.Minute), hdl.QueryArticleDetail)
 	r.PUT("/api/v1/article/:id", middles.TokenAuthMiddleware(hdl.TokenValid), hdl.UpdateArticle)
 	r.DELETE("/api/v1/article/:id", middles.TokenAuthMiddleware(hdl.TokenValid), hdl.DeleteArticle)
 

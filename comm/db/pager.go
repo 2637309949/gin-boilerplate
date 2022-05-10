@@ -30,6 +30,7 @@ func InitPage(ctx context.Context, itf LimitPage) {
 	if pageSize == 0 {
 		pageSize = 20
 	}
+
 	fieldPageNo := reflect.ValueOf(itf).Elem().FieldByName("PageNo")
 	fieldPageSize := reflect.ValueOf(itf).Elem().FieldByName("PageSize")
 	fieldPageNo.SetInt(int64(pageNo))

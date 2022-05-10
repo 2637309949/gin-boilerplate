@@ -55,6 +55,7 @@ func (s *Handler) Login(ctx *gin.Context) {
 		token.AccessToken = tokenDetails.AccessToken
 		token.RefreshToken = tokenDetails.RefreshToken
 	}
+
 	tk := gin.H{
 		"user":  user,
 		"token": token,

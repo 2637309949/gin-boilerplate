@@ -10,12 +10,12 @@ import (
 //ArticleForm ...
 type ArticleForm struct {
 	ArticleValidator
-	Title         string `form:"title" json:"title" binding:"required,title"`
-	Introduction  string `form:"introduction" json:"introduction" binding:"required,introduction"`
-	ContentMd     string `form:"content_md" json:"content_md" binding:"required,content_md"`
-	ContentHtml   string `form:"content_html" json:"content_html" binding:"required,content_html"`
-	DirectoryHtml string `form:"directory_html" json:"directory_html" binding:"required,directory_html"`
-	Tags          string `form:"tags" json:"tags" binding:"required,tags"`
+	Title         string `form:"title" json:"title" binding:"required,min=3,max=100"`
+	Introduction  string `form:"introduction" json:"introduction" binding:"required,min=3,max=200"`
+	ContentMd     string `form:"content_md" json:"content_md" binding:"required,min=3,max=10000"`
+	ContentHtml   string `form:"content_html" json:"content_html" binding:"required,min=3,max=10000"`
+	DirectoryHtml string `form:"directory_html" json:"directory_html" binding:"required,min=3,max=10000"`
+	Tags          string `form:"tags" json:"tags"`
 }
 
 //ArticleFilter...
@@ -25,7 +25,7 @@ type ArticleFilter struct {
 	PageSize  int32  `form:"page_size" json:"page_size"`
 	OrderType int32  `form:"order_type" json:"order_type"`
 	OrderCol  string `form:"order_col" json:"order_col"`
-	Title     string `form:"title" json:"title"`
+	Title     string `form:"title" json:"title" binding:"required"`
 }
 
 func (m *ArticleFilter) GetPageNo() int32 {
