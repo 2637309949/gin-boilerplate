@@ -1,4 +1,3 @@
-// Package context provides a context for accessing services
 package context
 
 import (

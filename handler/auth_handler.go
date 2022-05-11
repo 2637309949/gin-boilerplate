@@ -11,7 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	jwt "github.com/golang-jwt/jwt/v4"
-	uuid "github.com/twinj/uuid"
+	"github.com/teris-io/shortid"
 )
 
 //TokenValid ...
@@ -111,10 +111,10 @@ func (s *Handler) Refresh(ctx *gin.Context) {
 func (s *Handler) CreateToken(userID uint) (*types.TokenDetails, error) {
 	td := &types.TokenDetails{}
 	td.AtExpires = time.Now().Add(time.Minute * 15).Unix()
-	td.AccessUUID = uuid.NewV4().String()
+	td.AccessUUID = shortid.MustGenerate()
 
 	td.RtExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
-	td.RefreshUUID = uuid.NewV4().String()
+	td.RefreshUUID = shortid.MustGenerate()
 
 	var err error
 	//Creating Access Token
