@@ -35,8 +35,15 @@ func main() {
 
 	//users routes
 	r.POST("/api/v1/user/login", hdl.Login)
-	r.POST("/api/v1/user/register", hdl.Register)
 	r.GET("/api/v1/user/logout", hdl.Logout)
+	r.POST("/api/v1/user/register", hdl.Register)
+	r.POST("/api/v1/user/updatePassword", hdl.UpdatePassword) //for updatePassword
+	//
+	r.POST("/api/v1/user/sendVerificationEmail", hdl.SendVerificationEmail) //for markVerified email, send verification token
+	r.POST("/api/v1/user/verifyEmail", hdl.VerifyEmail)                     //for verify verification token and marked account
+	//
+	r.POST("/api/v1/user/sendPasswordResetEmail", hdl.SendPasswordResetEmail) //for sendPasswordResetEmail
+	r.POST("/api/v1/user/resetPassword", hdl.ResetPassword)                   //for resetPassword
 
 	//auth routes
 	r.POST("/api/v1/token/refresh", hdl.Refresh)

@@ -13,6 +13,7 @@ type User struct {
 	Email      string `gorm:"type:varchar(100);unique_index"`
 	Profession string `gorm:"type:varchar(255); not null; default ''"`
 	Avatar     string `gorm:"type:varchar(255); not null; default ''"`
+	Verified   uint32 `gorm:"type:int(10); not null; default 0;"`
 }
 
 // TableName sets the insert table name for this struct type
