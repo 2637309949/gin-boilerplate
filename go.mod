@@ -21,10 +21,8 @@ require (
 	github.com/memcachier/mc/v3 v3.0.3
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
-	github.com/myesui/uuid v1.0.0 // indirect
 	github.com/robfig/go-cache v0.0.0-20130306151617-9fc39e0dbf62
 	github.com/teris-io/shortid v0.0.0-20201117134242-e59966efd125
-	github.com/twinj/uuid v1.0.0
 	github.com/ugorji/go v1.2.6 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0
@@ -32,5 +30,4 @@ require (
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
-	gopkg.in/stretchr/testify.v1 v1.2.2 // indirect
 )

@@ -48,5 +48,6 @@ func main() {
 	r.PUT("/api/v1/article/:id", middles.TokenAuthMiddleware(hdl.TokenValid), hdl.UpdateArticle)
 	r.DELETE("/api/v1/article/:id", middles.TokenAuthMiddleware(hdl.TokenValid), hdl.DeleteArticle)
 
+	//start
 	r.Run(":8080")
 }
