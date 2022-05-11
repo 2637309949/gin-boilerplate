@@ -4,7 +4,6 @@ import (
 	"context"
 	"gin-boilerplate/comm/errors"
 	"gin-boilerplate/models"
-
 	"github.com/jinzhu/gorm"
 )
 

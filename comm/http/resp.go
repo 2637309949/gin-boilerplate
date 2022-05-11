@@ -1,7 +1,7 @@
 package http
 
 import (
-	"gin-boilerplate/middles"
+	"gin-boilerplate/comm/trace"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,20 +22,20 @@ func Responser(ctx *gin.Context, opts ...Option) {
 
 // Success returns successful field
 func Success(ctx *gin.Context, opts ...Option) {
-	requestId, _ := ctx.Get(middles.RequestIdKey)
+	traceID, _, _ := trace.FromContext(ctx.Request.Context())
 	opts = append([]Option{
 		StatusOption(200),
-		TraceOption(requestId),
+		TraceOption(traceID),
 	}, opts...)
 	Responser(ctx, opts...)
 }
 
 // Fail returns Failed field
 func Fail(ctx *gin.Context, opts ...Option) {
-	requestId, _ := ctx.Get(middles.RequestIdKey)
+	traceID, _, _ := trace.FromContext(ctx.Request.Context())
 	opts = append([]Option{
 		StatusOption(500),
-		TraceOption(requestId),
+		TraceOption(traceID),
 	}, opts...)
 	Responser(ctx, opts...)
 }

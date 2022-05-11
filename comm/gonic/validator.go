@@ -1,4 +1,4 @@
-package types
+package gonic
 
 import (
 	"reflect"
@@ -29,7 +29,6 @@ func (v *DefaultValidator) ValidateStruct(obj interface{}) error {
 			return err
 		}
 	}
-
 	return nil
 }
 
@@ -41,22 +40,17 @@ func (v *DefaultValidator) Engine() interface{} {
 
 func (v *DefaultValidator) lazyinit() {
 	v.once.Do(func() {
-
 		v.validate = validator.New()
 		v.validate.SetTagName("binding")
-
 		// add any custom validations etc. here
-
 		//Custom rule for user full name
 		v.validate.RegisterValidation("fullName", ValidateFullName)
 	})
 }
 
 func kindOfData(data interface{}) reflect.Kind {
-
 	value := reflect.ValueOf(data)
 	valueType := value.Kind()
-
 	if valueType == reflect.Ptr {
 		valueType = value.Elem().Kind()
 	}

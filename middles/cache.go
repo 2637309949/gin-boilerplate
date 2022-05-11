@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"gin-boilerplate/comm/cache"
+	"gin-boilerplate/comm/logger"
 
 	"github.com/gin-gonic/gin"
 )
@@ -122,7 +123,7 @@ func CachePage(store cache.CacheStore, expire time.Duration) gin.HandlerFunc {
 		key := CreateKey(url.RequestURI())
 		if err := store.Get(key, &rsp); err != nil {
 			if err != cache.ErrCacheMiss {
-				log.Println(err.Error())
+				logger.Error(c.Request.Context(), err.Error())
 			}
 			writer := newCachedWriter(store, expire, c.Writer, key)
 			c.Writer = writer
@@ -132,6 +133,7 @@ func CachePage(store cache.CacheStore, expire time.Duration) gin.HandlerFunc {
 				store.Delete(key)
 			}
 		} else {
+			logger.Warnf(c.Request.Context(), "Load from cache")
 			c.Writer.WriteHeader(rsp.Status)
 			for k, vals := range rsp.Header {
 				for _, v := range vals {
