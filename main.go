@@ -4,8 +4,8 @@ import (
 	"gin-boilerplate/comm/cache"
 	"gin-boilerplate/comm/db"
 	"gin-boilerplate/comm/gonic"
+	"gin-boilerplate/comm/middles"
 	"gin-boilerplate/handler"
-	"gin-boilerplate/middles"
 	"time"
 
 	"github.com/gin-contrib/gzip"
@@ -15,8 +15,7 @@ import (
 
 func main() {
 	//setup db
-	db.SetDsn("sqlite3", "./sqlite.db")
-	db.AutoMigrate(db.GetDB())
+	db.Init()
 	gin.SetMode(gin.ReleaseMode)
 	binding.Validator = new(gonic.DefaultValidator)
 	hdl := handler.Handler{Cache: cache.DefaultStore}
