@@ -6,6 +6,23 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// Send an email with a verification code to reset password.
+// Call "ResetPassword" endpoint once user provides the code.
+type SendPasswordResetEmailForm struct {
+	UserValidator
+	// email address to send reset for
+	Email string `form:"email" json:"email" binding:"required"`
+	// subject of the email
+	Subject string `form:"subject" json:"subject" binding:"required"`
+	// Text content of the email. Don't forget to include the string '$code' which will be replaced by the real verification link
+	// HTML emails are not available currently.
+	TextContent string `form:"text_content" json:"text_content" binding:"required"`
+	// Display name of the sender for the email. Note: the email address will still be 'noreply@email.m3ocontent.com'
+	FromName string `form:"from_name" json:"from_name" binding:"required"`
+	// Number of secs that the password reset email is valid for, defaults to 1800 secs (30 mins)
+	Expiration int64 `form:"expiration" json:"expiration" binding:"required"`
+}
+
 // Reset password with the code sent by the "SendPasswordResetEmail" endpoint.
 type ResetPasswordRequestForm struct {
 	UserValidator
@@ -283,6 +300,24 @@ func (f UserValidator) SendVerificationEmail(err error) string {
 
 //ResetPassword ...
 func (f UserValidator) ResetPassword(err error) string {
+	switch err.(type) {
+	case validator.ValidationErrors:
+		if _, ok := err.(*json.UnmarshalTypeError); ok {
+			return "Something went wrong, please try again later"
+		}
+		for _, err := range err.(validator.ValidationErrors) {
+			if err.Field() == "Token" {
+				return f.Token(err.Tag())
+			}
+		}
+	default:
+		return "Invalid request"
+	}
+	return "Something went wrong, please try again later"
+}
+
+//ResetPassword ...
+func (f UserValidator) SendPasswordResetEmail(err error) string {
 	switch err.(type) {
 	case validator.ValidationErrors:
 		if _, ok := err.(*json.UnmarshalTypeError); ok {
