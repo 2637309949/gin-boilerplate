@@ -37,7 +37,7 @@ func (s *Handler) Login(ctx *gin.Context) {
 	user := models.User{}
 	if err := s.QueryUserDetailDB(ctx, session, &where, &user); err != nil {
 		if errors.Is(err, errors.ERecordNotFound) {
-			http.Fail(ctx, http.MsgOption("账号或密码错误!"))
+			http.Fail(ctx, http.MsgOption("The account or password is incorrect"))
 			return
 		}
 		http.Fail(ctx, http.MsgOption(err.Error()))
@@ -45,7 +45,7 @@ func (s *Handler) Login(ctx *gin.Context) {
 	}
 	if ok, err := user.CompareHashAndPassword([]byte(loginForm.Password)); !ok || err != nil {
 		if !ok {
-			http.Fail(ctx, http.MsgOption("账号或密码错误!"))
+			http.Fail(ctx, http.MsgOption("The account or password is incorrect"))
 			return
 		}
 		http.Fail(ctx, http.MsgOption(err.Error()))

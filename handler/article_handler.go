@@ -63,7 +63,7 @@ func (s *Handler) QueryArticleDetail(ctx *gin.Context) {
 	where := models.Article{}
 	where.ID = util.MustUInt(ctx.Param("id"))
 	if where.ID == 0 {
-		http.Fail(ctx, http.MsgOption("ID 未设置"))
+		http.Fail(ctx, http.MsgOption("ID is not set"))
 		return
 	}
 
@@ -99,7 +99,7 @@ func (s *Handler) InsertArticle(ctx *gin.Context) {
 	err := s.QueryArticleDetailDB(ctx, session, &where, &inArticle)
 	timemark.Mark("QueryArticleDetailDB")
 	if err == nil {
-		http.Fail(ctx, http.MsgOption("记录已存在"))
+		http.Fail(ctx, http.MsgOption("Record already exists"))
 		return
 	}
 
@@ -124,7 +124,7 @@ func (s *Handler) UpdateArticle(ctx *gin.Context) {
 	inArticle := models.Article{}
 	inArticle.ID = util.MustUInt(ctx.Param("id"))
 	if inArticle.ID == 0 {
-		http.Fail(ctx, http.MsgOption("ID 未设置"))
+		http.Fail(ctx, http.MsgOption("ID is not set"))
 		return
 	}
 
@@ -155,7 +155,7 @@ func (s *Handler) DeleteArticle(ctx *gin.Context) {
 	where := models.Article{}
 	where.ID = util.MustUInt(ctx.Param("id"))
 	if where.ID == 0 {
-		http.Fail(ctx, http.MsgOption("ID 未设置"))
+		http.Fail(ctx, http.MsgOption("ID is not set"))
 		return
 	}
 
