@@ -49,11 +49,11 @@ func main() {
 	r.POST("/api/v1/token/refresh", hdl.Refresh)
 
 	//article routes
-	r.POST("/api/v1/article", middles.TokenAuthMiddleware(hdl.TokenValid), hdl.InsertArticle)
+	r.POST("/api/v1/article", middles.AuthMiddleware(hdl.TokenValid), hdl.InsertArticle)
 	r.GET("/api/v1/articles", middles.CachePage(hdl.Cache, time.Minute), hdl.QueryArticle)
 	r.GET("/api/v1/article/:id", middles.CachePage(hdl.Cache, time.Minute), hdl.QueryArticleDetail)
-	r.PUT("/api/v1/article/:id", middles.TokenAuthMiddleware(hdl.TokenValid), hdl.UpdateArticle)
-	r.DELETE("/api/v1/article/:id", middles.TokenAuthMiddleware(hdl.TokenValid), hdl.DeleteArticle)
+	r.PUT("/api/v1/article/:id", middles.AuthMiddleware(hdl.TokenValid), hdl.UpdateArticle)
+	r.DELETE("/api/v1/article/:id", middles.AuthMiddleware(hdl.TokenValid), hdl.DeleteArticle)
 
 	//start
 	r.Run(":8080")

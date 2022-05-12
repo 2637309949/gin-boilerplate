@@ -1,6 +1,6 @@
 smtp:
-  addr:
-  username:
+  addr: smtp.qq.com:25
+  username: 2637309949@qq.com
   identity:
-  password:
-  host: 
+  password: jhprqpetmlfteabe
+  host: smtp.qq.com

@@ -7,6 +7,7 @@ import (
 	"gin-boilerplate/comm/db"
 	"gin-boilerplate/comm/errors"
 	"gin-boilerplate/comm/http"
+	"gin-boilerplate/comm/logger"
 	"gin-boilerplate/models"
 	"gin-boilerplate/types"
 	"net/url"
@@ -94,11 +95,11 @@ func (s *Handler) Register(ctx *gin.Context) {
 		http.Fail(ctx, http.MsgOption("Email already exists"))
 		return
 	}
-	if err := user.GenerateFromPassword(bcrypt.DefaultCost); err == nil {
+	if err := user.GenerateFromPassword(bcrypt.DefaultCost); err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
-	if err := s.InsertUserDB(ctx, session, &user); err == nil {
+	if err := s.InsertUserDB(ctx, session, &user); err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -158,12 +159,12 @@ func (s *Handler) UpdatePassword(ctx *gin.Context) {
 		return
 	}
 	user.Password = updatePasswordForm.NewPassword
-	if err := user.GenerateFromPassword(bcrypt.DefaultCost); err == nil {
+	if err := user.GenerateFromPassword(bcrypt.DefaultCost); err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
 
-	if err := s.UpdateUserDB(ctx, session, &user); err == nil {
+	if err := s.UpdateUserDB(ctx, session, &user); err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -203,8 +204,9 @@ func (s *Handler) SendVerificationEmail(ctx *gin.Context) {
 	}
 
 	//send email
-	err := s.sendVerificationEmail(ctx, sendVerificationEmailRequestForm.FromName, sendVerificationEmailRequestForm.Email, user.Name, sendVerificationEmailRequestForm.Subject, sendVerificationEmailRequestForm.TextContent, token, sendVerificationEmailRequestForm.RedirectUrl, sendVerificationEmailRequestForm.FailureRedirectUrl)
+	err := s.sendVerificationEmail(ctx.Request.Context(), sendVerificationEmailRequestForm.FromName, sendVerificationEmailRequestForm.Email, user.Name, sendVerificationEmailRequestForm.Subject, sendVerificationEmailRequestForm.TextContent, token, sendVerificationEmailRequestForm.RedirectUrl, sendVerificationEmailRequestForm.FailureRedirectUrl)
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -239,7 +241,7 @@ func (s *Handler) VerifyEmail(ctx *gin.Context) {
 		return
 	}
 	user.Verified = 1
-	if err := s.UpdateUserDB(ctx, session, &user); err == nil {
+	if err := s.UpdateUserDB(ctx, session, &user); err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -316,12 +318,12 @@ func (s *Handler) ResetPassword(ctx *gin.Context) {
 
 	//update password
 	user.Password = resetPasswordRequestForm.NewPassword
-	if err := user.GenerateFromPassword(bcrypt.DefaultCost); err == nil {
+	if err := user.GenerateFromPassword(bcrypt.DefaultCost); err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
 
-	if err := s.UpdateUserDB(ctx, session, &user); err == nil {
+	if err := s.UpdateUserDB(ctx, session, &user); err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -334,25 +336,28 @@ func (s *Handler) sendVerificationEmail(ctx context.Context, fromName, toAddress
 	uri := "https://baidu.com"
 	query := "?token=" + token + "&redirectUrl=" + url.QueryEscape(redirctUrl) + "&failureRedirectUrl=" + url.QueryEscape(failureRedirectUrl)
 	textContent = strings.Replace(textContent, "$verification_link", uri+query, -1)
-	s.sendEmail(ctx, &email.Email{
+	email := email.Email{
 		Subject: subject,
 		From:    fromName,
 		To:      []string{toAddress},
 		Text:    []byte(textContent),
-	})
-	return nil
+	}
+	err := s.sendEmail(ctx, &email)
+	fmt.Println(email)
+	return err
 }
 
 //SendPasswordResetEmail...
 func (s *Handler) sendPasswordResetEmail(ctx context.Context, userId uint, codeStr, fromName, toAddress, toUsername, subject, textContent string) error {
 	textContent = strings.Replace(textContent, "$code", codeStr, -1)
-	s.sendEmail(ctx, &email.Email{
+	email := email.Email{
 		Subject: subject,
 		From:    fromName,
 		To:      []string{toAddress},
 		Text:    []byte(textContent),
-	})
-	return nil
+	}
+	err := s.sendEmail(ctx, &email)
+	return err
 }
 
 func (s *Handler) generatePasswordResetCodeStoreKey(userId uint, code string) string {
@@ -367,7 +372,7 @@ func (s *Handler) savePasswordResetCode(ctx context.Context, userId uint, code s
 		Code:    code,
 	}
 
-	if err := s.Cache.Set(s.generatePasswordResetCodeStoreKey(userId, code), pwcode, expiry); err == nil {
+	if err := s.Cache.Set(s.generatePasswordResetCodeStoreKey(userId, code), pwcode, expiry); err != nil {
 		return nil, err
 	}
 

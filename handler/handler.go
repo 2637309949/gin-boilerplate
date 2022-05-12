@@ -2,12 +2,12 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"gin-boilerplate/comm/cache"
 	"gin-boilerplate/comm/http"
+	"gin-boilerplate/comm/viper"
 	"net/smtp"
 	"runtime"
-
-	"gin-boilerplate/comm/viper"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jordan-wright/email"
@@ -34,6 +34,10 @@ func (s *Handler) NoRoute(ctx *gin.Context) {
 //NoRoute ...
 func (s *Handler) sendEmail(ctx context.Context, el *email.Email) error {
 	addr, username, identity, password, host := viper.GetString("smtp.addr"), viper.GetString("smtp.username"), viper.GetString("smtp.identity"), viper.GetString("smtp.password"), viper.GetString("smtp.host")
+	fmt.Println(addr)
+	fmt.Println(username)
+	fmt.Println(password)
+	fmt.Println(host)
 	err := el.Send(addr, smtp.PlainAuth(identity, username, password, host))
 	return err
 }
