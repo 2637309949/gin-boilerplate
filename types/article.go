@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -92,7 +91,6 @@ func (f ArticleValidator) Insert(err error) string {
 
 //Signin ...
 func (f ArticleValidator) Filter(err error) string {
-	fmt.Println("-----", err)
 	switch err.(type) {
 	case validator.ValidationErrors:
 		if _, ok := err.(*json.UnmarshalTypeError); ok {
