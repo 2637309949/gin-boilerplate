@@ -68,7 +68,7 @@ func GetLevel(levelStr string) (Level, error) {
 }
 
 func AttachFields(ctx context.Context) map[string]interface{} {
-	return map[string]interface{}{"trace": ExtractTraceID(ctx)}
+	return map[string]interface{}{"trace": fmt.Sprintf("%10s", ExtractTraceID(ctx))}
 }
 
 func Info(ctx context.Context, args ...interface{}) {

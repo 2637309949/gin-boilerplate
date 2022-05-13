@@ -8,13 +8,12 @@ import (
 
 	"gin-boilerplate/comm/context/metadata"
 	"gin-boilerplate/comm/trace"
-
-	"github.com/teris-io/shortid"
+	"gin-boilerplate/comm/util"
 )
 
 func FromContext(ctx context.Context, patchMd ...metadata.Metadata) context.Context {
 	if _, _, ok := trace.FromContext(ctx); !ok {
-		ctx = trace.ToContext(ctx, shortid.MustGenerate(), shortid.MustGenerate())
+		ctx = trace.ToContext(ctx, util.RandStringRunes(10), util.RandStringRunes(10))
 	}
 
 	for i := range patchMd {
