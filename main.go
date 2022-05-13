@@ -11,6 +11,8 @@ import (
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 func main() {

@@ -4,19 +4,11 @@ import (
 	"context"
 	"gin-boilerplate/models"
 
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
-
 	"github.com/jinzhu/gorm"
 )
 
 var (
 	db *gorm.DB
-)
-
-const (
-	ORDER_NONE = iota
-	ORDER_ASC
-	ORDER_DESC
 )
 
 func SetLimit(ctx context.Context, db *gorm.DB, limiter interface{}) *gorm.DB {

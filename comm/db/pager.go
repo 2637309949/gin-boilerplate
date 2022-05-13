@@ -5,11 +5,6 @@ import (
 	"reflect"
 )
 
-type order interface {
-	GetOrderType() int32
-	GetOrderCol() string
-}
-
 type LimitOffset interface {
 	GetOffset() int32
 	GetLimit() int32
