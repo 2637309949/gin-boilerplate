@@ -29,7 +29,7 @@ func main() {
 		web.NoRoute(h.NoRoute),
 		web.Static("/public", "./public"))
 
-	//users routes
+	//user routes
 	r.POST("/api/v1/user/login", h.Login)
 	r.GET("/api/v1/user/logout", h.Logout)
 	r.POST("/api/v1/user/register", h.Register)
