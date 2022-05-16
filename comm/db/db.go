@@ -48,13 +48,6 @@ func SetOrder(ctx context.Context, db *gorm.DB, o order, tb ...string) *gorm.DB 
 	return db
 }
 
-//Init returns database handler
-func Init() *gorm.DB {
-	SetDsn("sqlite3", "./sqlite.db")
-	AutoMigrate(GetDB())
-	return GetDB()
-}
-
 //SetDsn establishes dsn  to database and saves its handler into db *sqlx.DB
 func SetDsn(dialect string, args ...interface{}) {
 	var err error

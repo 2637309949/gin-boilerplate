@@ -20,8 +20,8 @@ type Handler struct {
 //Index ...
 func (s *Handler) Index(ctx *gin.Context) {
 	tk := gin.H{
-		"ginBoilerplateVersion": "v1.0",
-		"goVersion":             runtime.Version(),
+		"gin_boilerplate_version": "v1.0",
+		"go_version":              runtime.Version(),
 	}
 	http.Success(ctx, http.FlatOption(tk))
 }
