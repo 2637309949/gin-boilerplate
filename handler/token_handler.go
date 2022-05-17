@@ -14,6 +14,10 @@ import (
 	"github.com/teris-io/shortid"
 )
 
+var (
+	userIDKey = "userID"
+)
+
 //TokenValid ...
 func (s *Handler) TokenValid(ctx *gin.Context) {
 	tokenAuth, err := s.ExtractTokenMetadata(ctx.Request)
@@ -33,7 +37,10 @@ func (s *Handler) TokenValid(ctx *gin.Context) {
 	}
 
 	//To be called from GetUserID()
-	ctx.Set("userID", userID)
+	ctx.Set(userIDKey, userID)
+
+	//Next middle
+	ctx.Next()
 }
 
 //Refresh ...
