@@ -15,6 +15,7 @@ type Option struct {
 		RelativePath string
 		Root         string
 	}
+	Swagger string
 	Metrics string
 }
 
@@ -25,6 +26,13 @@ func DataBase(dialect string, args ...interface{}) OptFunc {
 	return func(o *Option) {
 		o.DialectArgs = args
 		o.Dialect = dialect
+	}
+}
+
+//DataBase...
+func Swagger(dir string) OptFunc {
+	return func(o *Option) {
+		o.Swagger = dir
 	}
 }
 

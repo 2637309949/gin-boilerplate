@@ -2,6 +2,7 @@ package web
 
 import (
 	"gin-boilerplate/comm/db"
+	"gin-boilerplate/comm/swagger/gen"
 
 	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-gonic/gin"
@@ -26,5 +27,17 @@ func New(opts ...OptFunc) *gin.Engine {
 	r.NoRoute(opt.NoRoute)
 	r.Static(opt.Static.RelativePath, opt.Static.Root)
 
+	// gen api doc
+	gn := gen.New()
+	genCfg := gen.Config{
+		SearchDir:          opt.Swagger,
+		MainAPIFile:        "main.go",
+		PropNamingStrategy: "camelcase",
+		MarkdownFilesDir:   "",
+		OutputDir:          "./",
+		ParseVendor:        true,
+		ParseDependency:    true,
+	}
+	go gn.Build(&genCfg)
 	return r
 }

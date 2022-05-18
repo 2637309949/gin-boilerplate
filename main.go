@@ -33,7 +33,8 @@ func main() {
 		web.Metrics(viper.GetString("http.metrics")),
 		web.Index(h.Index),
 		web.NoRoute(h.NoRoute),
-		web.Static("/public", "./public"))
+		web.Static("/public", "./public"),
+		web.Swagger("handler"))
 
 	//user routes
 	r.POST("/api/v1/user/login", h.Login)
