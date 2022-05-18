@@ -1,16 +1,18 @@
 package main
 
 import (
+	"context"
 	"gin-boilerplate/comm/cache"
 	"gin-boilerplate/comm/gonic"
+	"gin-boilerplate/comm/logger"
 	"gin-boilerplate/comm/middles"
 	"gin-boilerplate/comm/web"
 	"gin-boilerplate/handler"
 	"time"
 
+	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
-
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
@@ -20,11 +22,13 @@ func main() {
 	r := web.New(web.Mode(gin.ReleaseMode),
 		web.Sqlite3("./sqlite.db"),
 		web.Validator(new(gonic.DefaultValidator)),
-		web.Middleware(gonic.Logger(),
+		web.Middleware(ginprom.PromMiddleware(nil),
+			gonic.Logger(),
 			gin.Recovery(),
 			middles.CORSMiddleware(),
 			middles.RequestIDMiddleware(),
 			gzip.Gzip(gzip.DefaultCompression)),
+		web.Metrics("/metrics"),
 		web.Index(h.Index),
 		web.NoRoute(h.NoRoute),
 		web.Static("/public", "./public"))
@@ -52,5 +56,6 @@ func main() {
 	r.DELETE("/api/v1/article/:id", middles.AuthMiddleware(h.TokenValid), h.DeleteArticle)
 
 	//start
+	logger.Infof(context.TODO(), "listen and serve on 0.0.0.0:%v", 8080)
 	r.Run(":8080")
 }

@@ -15,6 +15,7 @@ type Option struct {
 		RelativePath string
 		Root         string
 	}
+	Metrics string
 }
 
 type OptFunc func(o *Option)
@@ -67,5 +68,12 @@ func Static(relativePath string, root string) OptFunc {
 	return func(o *Option) {
 		o.Static.RelativePath = relativePath
 		o.Static.Root = root
+	}
+}
+
+//Metrics...
+func Metrics(m string) OptFunc {
+	return func(o *Option) {
+		o.Metrics = m
 	}
 }

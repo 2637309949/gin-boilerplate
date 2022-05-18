@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/bradfitz/gomemcache v0.0.0-20220106215444-fb4bf637b56d
+	github.com/chenjiandongx/ginprom v0.0.0-20210617023641-6c809602c38a
 	github.com/gin-contrib/gzip v0.0.5
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/validator/v10 v10.8.0
@@ -17,6 +18,7 @@ require (
 	github.com/lib/pq v1.5.2 // indirect
 	github.com/mattn/go-sqlite3 v1.14.8 // indirect
 	github.com/memcachier/mc/v3 v3.0.3
+	github.com/prometheus/client_golang v1.4.0
 	github.com/robfig/go-cache v0.0.0-20130306151617-9fc39e0dbf62
 	github.com/spf13/viper v1.11.0
 	github.com/teris-io/shortid v0.0.0-20201117134242-e59966efd125
