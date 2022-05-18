@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"gin-boilerplate/comm/cache"
 	"gin-boilerplate/comm/gonic"
 	"gin-boilerplate/comm/logger"
 	"gin-boilerplate/comm/middles"
+	"gin-boilerplate/comm/viper"
 	"gin-boilerplate/comm/web"
 	"gin-boilerplate/handler"
 	"time"
@@ -20,7 +22,7 @@ func main() {
 	//handler
 	h := handler.Handler{Cache: cache.DefaultStore}
 	r := web.New(web.Mode(gin.ReleaseMode),
-		web.Sqlite3("./sqlite.db"),
+		web.DataBase(viper.GetString("db.dialect"), viper.GetString("db.args")),
 		web.Validator(new(gonic.DefaultValidator)),
 		web.Middleware(ginprom.PromMiddleware(nil),
 			gonic.Logger(),
@@ -28,7 +30,7 @@ func main() {
 			middles.CORSMiddleware(),
 			middles.RequestIDMiddleware(),
 			gzip.Gzip(gzip.DefaultCompression)),
-		web.Metrics("/metrics"),
+		web.Metrics(viper.GetString("http.metrics")),
 		web.Index(h.Index),
 		web.NoRoute(h.NoRoute),
 		web.Static("/public", "./public"))
@@ -56,6 +58,6 @@ func main() {
 	r.DELETE("/api/v1/article/:id", middles.AuthMiddleware(h.TokenValid), h.DeleteArticle)
 
 	//start
-	logger.Infof(context.TODO(), "listen and serve on 0.0.0.0:%v", 8080)
-	r.Run(":8080")
+	logger.Infof(context.TODO(), "listen and serve on 0.0.0.0:%v", viper.GetString("http.port"))
+	r.Run(fmt.Sprintf(":%v", viper.GetString("http.port")))
 }

@@ -20,11 +20,11 @@ type Option struct {
 
 type OptFunc func(o *Option)
 
-//Sqlite3...
-func Sqlite3(args ...interface{}) OptFunc {
+//DataBase...
+func DataBase(dialect string, args ...interface{}) OptFunc {
 	return func(o *Option) {
 		o.DialectArgs = args
-		o.Dialect = "sqlite3"
+		o.Dialect = dialect
 	}
 }
 

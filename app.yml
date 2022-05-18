@@ -1,3 +1,9 @@
+http:
+  port: 8080
+  metrics: /metrics
+db:
+  dialect: sqlite3
+  args: ./sqlite.db
 smtp:
   addr: smtp.qq.com:25
   username: 2637309949@qq.com
