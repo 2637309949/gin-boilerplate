@@ -12,7 +12,17 @@ import (
 	"github.com/jinzhu/copier"
 )
 
-//QueryOptionset...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary QueryOptionset
+// @Description get optionset by give params
+// @Tags optionsets
+// @Accept  json
+// @Produce  json
+// @Param  page_no  query  int  true  "page no"
+// @Param  page_size  query  int  true  "page size"
+// @Param  order_type  query  int  true  "order type"
+// @Param  order_col  query  int  true  "order col"
+// @Router /api/v1/QueryOptionset [get]
 func (s *Handler) QueryOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryOptionset")()
