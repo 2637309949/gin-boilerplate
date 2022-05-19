@@ -22,13 +22,10 @@ import (
 // @Param  page_size  query  int  true  "page size"
 // @Param  order_type  query  int  true  "order type"
 // @Param  order_col  query  int  true  "order col"
-// @Success 200 {object} http.Pager
-// @Failure 400 {object} model.HTTPError
 // @Router /api/v1/QueryArticle [get]
 func (s *Handler) QueryArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryArticle")()
-
 	var articleFilter types.ArticleFilter
 	if err := ctx.Bind(&articleFilter); err != nil {
 		http.Fail(ctx, http.MsgOption(articleFilter.Filter(err)))

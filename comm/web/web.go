@@ -29,15 +29,15 @@ func New(opts ...OptFunc) *gin.Engine {
 
 	// gen api doc
 	gn := gen.New()
-	genCfg := gen.Config{
+	gc := gen.Config{
 		SearchDir:          opt.Swagger,
-		MainAPIFile:        "main.go",
+		MainAPIFile:        "../main.go",
 		PropNamingStrategy: "camelcase",
 		MarkdownFilesDir:   "",
 		OutputDir:          "./",
 		ParseVendor:        true,
 		ParseDependency:    true,
 	}
-	go gn.Build(&genCfg)
+	go gn.Build(&gc)
 	return r
 }

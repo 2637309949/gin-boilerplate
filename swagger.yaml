@@ -1,0 +1,46 @@
+info:
+  contact: {}
+  license: {}
+paths:
+  /api/v1/QueryArticle:
+    get:
+      consumes:
+      - application/json
+      description: get article by give params
+      parameters:
+      - description: page no
+        in: query
+        name: page_no
+        required: true
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      - description: order type
+        in: query
+        name: order_type
+        required: true
+        type: integer
+      - description: order col
+        in: query
+        name: order_col
+        required: true
+        type: integer
+      produces:
+      - application/json
+      summary: QueryArticle
+      tags:
+      - articles
+securityDefinitions:
+  "":
+    authorizationUrl: ""
+    flow: accessCode
+    scopes:
+      admin: ""
+      read: ""
+      write: ""
+    type: oauth2
+    x-tokenName: Authorization
+swagger: "2.0"
