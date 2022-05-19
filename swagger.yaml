@@ -33,6 +33,37 @@ paths:
       summary: QueryArticle
       tags:
       - articles
+  /api/v1/QueryOptionset:
+    get:
+      consumes:
+      - application/json
+      description: get optionset by give params
+      parameters:
+      - description: page no
+        in: query
+        name: page_no
+        required: true
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      - description: order type
+        in: query
+        name: order_type
+        required: true
+        type: integer
+      - description: order col
+        in: query
+        name: order_col
+        required: true
+        type: integer
+      produces:
+      - application/json
+      summary: QueryOptionset
+      tags:
+      - optionsets
 securityDefinitions:
   "":
     authorizationUrl: ""
