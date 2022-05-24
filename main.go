@@ -41,10 +41,10 @@ func main() {
 	r.GET("/api/v1/user/logout", h.Logout)
 	r.POST("/api/v1/user/register", h.Register)
 	r.POST("/api/v1/user/updatePassword", h.UpdatePassword) //for updatePassword
-
+	//
 	r.POST("/api/v1/user/sendVerificationEmail", h.SendVerificationEmail) //for markVerified email, send verification token
 	r.POST("/api/v1/user/verifyEmail", h.VerifyEmail)                     //for verify verification token and marked account
-
+	//
 	r.POST("/api/v1/user/sendPasswordResetEmail", h.SendPasswordResetEmail) //for sendPasswordResetEmail
 	r.POST("/api/v1/user/resetPassword", h.ResetPassword)                   //for resetPassword
 

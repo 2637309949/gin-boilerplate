@@ -3,7 +3,6 @@ module gin-boilerplate
 go 1.15
 
 require (
-	github.com/2637309949/dolphin v1.2.17
 	github.com/KyleBanks/depth v1.2.1
 	github.com/bradfitz/gomemcache v0.0.0-20220106215444-fb4bf637b56d
 	github.com/chenjiandongx/ginprom v0.0.0-20210617023641-6c809602c38a
@@ -13,11 +12,14 @@ require (
 	github.com/go-openapi/spec v0.20.6
 	github.com/go-playground/validator/v10 v10.8.0
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/google/uuid v1.3.0
 	github.com/jinzhu/copier v0.3.5
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
+	github.com/lib/pq v1.10.2 // indirect
+	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-sqlite3 v1.14.8 // indirect
 	github.com/memcachier/mc/v3 v3.0.3
 	github.com/prometheus/client_golang v1.11.0
