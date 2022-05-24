@@ -2,11 +2,31 @@ info:
   contact: {}
   license: {}
 paths:
+  /api/v1/DeleteArticle:
+    post:
+      consumes:
+      - application/json
+      description: delete article
+      produces:
+      - application/json
+      summary: DeleteArticle
+      tags:
+      - articles
+  /api/v1/InsertArticle:
+    post:
+      consumes:
+      - application/json
+      description: new article
+      produces:
+      - application/json
+      summary: InsertArticle
+      tags:
+      - articles
   /api/v1/QueryArticle:
     get:
       consumes:
       - application/json
-      description: get article by give params
+      description: get article by gived params
       parameters:
       - description: page no
         in: query
@@ -31,6 +51,16 @@ paths:
       produces:
       - application/json
       summary: QueryArticle
+      tags:
+      - articles
+  /api/v1/QueryArticleDetail:
+    get:
+      consumes:
+      - application/json
+      description: get article by gived id
+      produces:
+      - application/json
+      summary: QueryArticleDetail
       tags:
       - articles
   /api/v1/QueryOptionset:
@@ -64,6 +94,16 @@ paths:
       summary: QueryOptionset
       tags:
       - optionsets
+  /api/v1/UpdateArticle:
+    post:
+      consumes:
+      - application/json
+      description: update article
+      produces:
+      - application/json
+      summary: UpdateArticle
+      tags:
+      - articles
 securityDefinitions:
   "":
     authorizationUrl: ""

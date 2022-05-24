@@ -14,7 +14,7 @@ import (
 
 // ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
 // @Summary QueryArticle
-// @Description get article by give params
+// @Description get article by gived params
 // @Tags articles
 // @Accept  json
 // @Produce  json
@@ -60,7 +60,13 @@ func (s *Handler) QueryArticle(ctx *gin.Context) {
 	http.Success(ctx, http.FlatOption(pager))
 }
 
-//QueryArticleDetail...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary QueryArticleDetail
+// @Description get article by gived id
+// @Tags articles
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/QueryArticleDetail [get]
 func (s *Handler) QueryArticleDetail(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryArticleDetail")()
@@ -86,7 +92,13 @@ func (s *Handler) QueryArticleDetail(ctx *gin.Context) {
 	http.Success(ctx, http.FlatOption(inArticle))
 }
 
-//InsertArticle...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary InsertArticle
+// @Description new article
+// @Tags articles
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/InsertArticle [post]
 func (s *Handler) InsertArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "InsertArticle")()
@@ -122,7 +134,13 @@ func (s *Handler) InsertArticle(ctx *gin.Context) {
 	http.Success(ctx, http.FlatOption(inArticle))
 }
 
-//UpdateArticle...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary UpdateArticle
+// @Description update article
+// @Tags articles
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/UpdateArticle [post]
 func (s *Handler) UpdateArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "UpdateArticle")()
@@ -154,7 +172,13 @@ func (s *Handler) UpdateArticle(ctx *gin.Context) {
 	http.Success(ctx, http.FlatOption(inArticle))
 }
 
-//DeleteArticle...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary DeleteArticle
+// @Description delete article
+// @Tags articles
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/DeleteArticle [post]
 func (s *Handler) DeleteArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "DeleteArticle")()

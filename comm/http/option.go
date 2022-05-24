@@ -7,23 +7,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Option func(fields gin.H)
+type Option func(v gin.H)
 
 func StatusOption(status int) Option {
-	return func(fields gin.H) {
-		fields["code"] = status
+	return func(v gin.H) {
+		v["code"] = status
 	}
 }
 
 func TraceOption(requestId interface{}) Option {
-	return func(fields gin.H) {
-		fields["request_id"] = requestId
+	return func(v gin.H) {
+		v["request_id"] = requestId
 	}
 }
 
 func DataOption(data interface{}) Option {
-	return func(fields gin.H) {
-		fields["data"] = data
+	return func(v gin.H) {
+		v["data"] = data
 	}
 }
 
@@ -31,15 +31,15 @@ func FlatOption(target interface{}) Option {
 	var data gin.H
 	jmv, _ := json.Marshal(target)
 	json.Unmarshal(jmv, &data)
-	return func(fields gin.H) {
-		for k, v := range data {
-			fields[k] = v
+	return func(v gin.H) {
+		for k, v1 := range data {
+			v[k] = v1
 		}
 	}
 }
 
 func MsgOption(format string, args ...interface{}) Option {
-	return func(fields gin.H) {
-		fields["msg"] = fmt.Sprintf(format, args...)
+	return func(v gin.H) {
+		v["msg"] = fmt.Sprintf(format, args...)
 	}
 }
