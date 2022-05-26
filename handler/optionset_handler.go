@@ -61,7 +61,13 @@ func (h *Handler) QueryOptionset(ctx *gin.Context) {
 	http.Success(ctx, http.FlatOption(pager))
 }
 
-//QueryOptionsetDetail...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary QueryOptionsetDetail
+// @Description get optionset by gived id
+// @Tags optionsets
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/QueryOptionsetDetail [get]
 func (h *Handler) QueryOptionsetDetail(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryOptionsetDetail")()
