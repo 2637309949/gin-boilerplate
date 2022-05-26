@@ -87,7 +87,13 @@ func (s *Handler) QueryOptionsetDetail(ctx *gin.Context) {
 	http.Success(ctx, http.FlatOption(inOptionset))
 }
 
-//InsertOptionset...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary InsertOptionset
+// @Description new article
+// @Tags optionsets
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/InsertOptionset [post]
 func (s *Handler) InsertOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "InsertOptionset")()
@@ -123,7 +129,13 @@ func (s *Handler) InsertOptionset(ctx *gin.Context) {
 	http.Success(ctx, http.FlatOption(inOptionset))
 }
 
-//UpdateOptionset...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary UpdateOptionset
+// @Description update optionset
+// @Tags optionsets
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/UpdateOptionset [post]
 func (s *Handler) UpdateOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "UpdateOptionset")()
@@ -155,7 +167,13 @@ func (s *Handler) UpdateOptionset(ctx *gin.Context) {
 	http.Success(ctx, http.FlatOption(inOptionset))
 }
 
-//DeleteOptionset...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary DeleteOptionset
+// @Description delete optionset
+// @Tags optionsets
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/DeleteOptionset [post]
 func (s *Handler) DeleteOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "DeleteOptionset")()
