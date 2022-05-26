@@ -23,7 +23,7 @@ import (
 // @Param  order_type  query  int  true  "order type"
 // @Param  order_col  query  int  true  "order col"
 // @Router /api/v1/QueryArticle [get]
-func (s *Handler) QueryArticle(ctx *gin.Context) {
+func (h *Handler) QueryArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryArticle")()
 	var articleFilter types.ArticleFilter
@@ -41,7 +41,7 @@ func (s *Handler) QueryArticle(ctx *gin.Context) {
 	where := models.Article{
 		Title: articleFilter.Title,
 	}
-	err := s.QueryArticleDB(ctx, session, &where, &lst, &totalCount)
+	err := h.QueryArticleDB(ctx, session, &where, &lst, &totalCount)
 	timemark.Mark("QueryArticleDB")
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("QueryArticleDB failed. [%s]", err.Error()))
@@ -67,7 +67,7 @@ func (s *Handler) QueryArticle(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Router /api/v1/QueryArticleDetail [get]
-func (s *Handler) QueryArticleDetail(ctx *gin.Context) {
+func (h *Handler) QueryArticleDetail(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryArticleDetail")()
 
@@ -82,7 +82,7 @@ func (s *Handler) QueryArticleDetail(ctx *gin.Context) {
 		return
 	}
 
-	err := s.QueryArticleDetailDB(ctx, session, &where, &inArticle)
+	err := h.QueryArticleDetailDB(ctx, session, &where, &inArticle)
 	timemark.Mark("QueryArticleDetailDB")
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("QueryArticleDetailDB failed. [%s]", err.Error()))
@@ -99,7 +99,7 @@ func (s *Handler) QueryArticleDetail(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Router /api/v1/InsertArticle [post]
-func (s *Handler) InsertArticle(ctx *gin.Context) {
+func (h *Handler) InsertArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "InsertArticle")()
 
@@ -117,14 +117,14 @@ func (s *Handler) InsertArticle(ctx *gin.Context) {
 		Title: articleForm.Title,
 	}
 	copier.Copy(&inArticle, &articleForm)
-	err := s.QueryArticleDetailDB(ctx, session, &where, &inArticle)
+	err := h.QueryArticleDetailDB(ctx, session, &where, &inArticle)
 	timemark.Mark("QueryArticleDetailDB")
 	if err == nil {
 		http.Fail(ctx, http.MsgOption("Record already exists"))
 		return
 	}
 
-	err = s.InsertArticleDB(ctx, session, &inArticle)
+	err = h.InsertArticleDB(ctx, session, &inArticle)
 	timemark.Mark("InsertArticleDB")
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("InsertSchedulePositionDB failed. [%v]", err))
@@ -141,7 +141,7 @@ func (s *Handler) InsertArticle(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Router /api/v1/UpdateArticle [post]
-func (s *Handler) UpdateArticle(ctx *gin.Context) {
+func (h *Handler) UpdateArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "UpdateArticle")()
 
@@ -162,7 +162,7 @@ func (s *Handler) UpdateArticle(ctx *gin.Context) {
 	}
 	copier.Copy(&inArticle, &articleForm)
 
-	err := s.UpdateArticleDB(ctx, session, &inArticle)
+	err := h.UpdateArticleDB(ctx, session, &inArticle)
 	timemark.Mark("UpdateArticleDB")
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("UpdateArticleDB failed. [%v]", err))
@@ -179,7 +179,7 @@ func (s *Handler) UpdateArticle(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Router /api/v1/DeleteArticle [post]
-func (s *Handler) DeleteArticle(ctx *gin.Context) {
+func (h *Handler) DeleteArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "DeleteArticle")()
 
@@ -192,7 +192,7 @@ func (s *Handler) DeleteArticle(ctx *gin.Context) {
 		return
 	}
 
-	err := s.DeleteArticleDB(ctx, session, &where)
+	err := h.DeleteArticleDB(ctx, session, &where)
 	timemark.Mark("DeleteArticleDB")
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("DeleteArticleDB failed. [%v]", err))

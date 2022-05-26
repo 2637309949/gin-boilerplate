@@ -18,7 +18,7 @@ type Handler struct {
 }
 
 //Index ...
-func (s *Handler) Index(ctx *gin.Context) {
+func (h *Handler) Index(ctx *gin.Context) {
 	tk := gin.H{
 		"gin_boilerplate_version": "v1.0",
 		"go_version":              runtime.Version(),
@@ -27,12 +27,12 @@ func (s *Handler) Index(ctx *gin.Context) {
 }
 
 //NoRoute ...
-func (s *Handler) NoRoute(ctx *gin.Context) {
+func (h *Handler) NoRoute(ctx *gin.Context) {
 	http.Fail(ctx, http.MsgOption("NotFound"), http.StatusOption(http.StatusNotFound))
 }
 
 //NoRoute ...
-func (s *Handler) sendEmail(ctx context.Context, el *email.Email) error {
+func (h *Handler) sendEmail(ctx context.Context, el *email.Email) error {
 	addr, username, identity, password, host := viper.GetString("smtp.addr"), viper.GetString("smtp.username"), viper.GetString("smtp.identity"), viper.GetString("smtp.password"), viper.GetString("smtp.host")
 	fmt.Println(addr)
 	fmt.Println(username)

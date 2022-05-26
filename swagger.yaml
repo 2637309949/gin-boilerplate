@@ -12,6 +12,16 @@ paths:
       summary: DeleteArticle
       tags:
       - articles
+  /api/v1/DeleteOptionset:
+    post:
+      consumes:
+      - application/json
+      description: delete optionset
+      produces:
+      - application/json
+      summary: DeleteOptionset
+      tags:
+      - optionsets
   /api/v1/InsertArticle:
     post:
       consumes:
@@ -22,6 +32,16 @@ paths:
       summary: InsertArticle
       tags:
       - articles
+  /api/v1/InsertOptionset:
+    post:
+      consumes:
+      - application/json
+      description: new article
+      produces:
+      - application/json
+      summary: InsertOptionset
+      tags:
+      - optionsets
   /api/v1/QueryArticle:
     get:
       consumes:
@@ -104,6 +124,16 @@ paths:
       summary: UpdateArticle
       tags:
       - articles
+  /api/v1/UpdateOptionset:
+    post:
+      consumes:
+      - application/json
+      description: update optionset
+      produces:
+      - application/json
+      summary: UpdateOptionset
+      tags:
+      - optionsets
 securityDefinitions:
   "":
     authorizationUrl: ""

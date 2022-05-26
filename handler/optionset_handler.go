@@ -23,7 +23,7 @@ import (
 // @Param  order_type  query  int  true  "order type"
 // @Param  order_col  query  int  true  "order col"
 // @Router /api/v1/QueryOptionset [get]
-func (s *Handler) QueryOptionset(ctx *gin.Context) {
+func (h *Handler) QueryOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryOptionset")()
 
@@ -42,7 +42,7 @@ func (s *Handler) QueryOptionset(ctx *gin.Context) {
 	where := models.Optionset{
 		Name: articleFilter.Name,
 	}
-	err := s.QueryOptionsetDB(ctx, session, &where, &lst, &totalCount)
+	err := h.QueryOptionsetDB(ctx, session, &where, &lst, &totalCount)
 	timemark.Mark("QueryOptionsetDB")
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("QueryOptionsetDB failed. [%s]", err.Error()))
@@ -62,7 +62,7 @@ func (s *Handler) QueryOptionset(ctx *gin.Context) {
 }
 
 //QueryOptionsetDetail...
-func (s *Handler) QueryOptionsetDetail(ctx *gin.Context) {
+func (h *Handler) QueryOptionsetDetail(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryOptionsetDetail")()
 
@@ -77,7 +77,7 @@ func (s *Handler) QueryOptionsetDetail(ctx *gin.Context) {
 		return
 	}
 
-	err := s.QueryOptionsetDetailDB(ctx, session, &where, &inOptionset)
+	err := h.QueryOptionsetDetailDB(ctx, session, &where, &inOptionset)
 	timemark.Mark("QueryOptionsetDetailDB")
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("QueryOptionsetDetailDB failed. [%s]", err.Error()))
@@ -94,7 +94,7 @@ func (s *Handler) QueryOptionsetDetail(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Router /api/v1/InsertOptionset [post]
-func (s *Handler) InsertOptionset(ctx *gin.Context) {
+func (h *Handler) InsertOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "InsertOptionset")()
 
@@ -112,14 +112,14 @@ func (s *Handler) InsertOptionset(ctx *gin.Context) {
 		Name: articleForm.Name,
 	}
 	copier.Copy(&inOptionset, &articleForm)
-	err := s.QueryOptionsetDetailDB(ctx, session, &where, &inOptionset)
+	err := h.QueryOptionsetDetailDB(ctx, session, &where, &inOptionset)
 	timemark.Mark("QueryOptionsetDetailDB")
 	if err == nil {
 		http.Fail(ctx, http.MsgOption("Record already exists"))
 		return
 	}
 
-	err = s.InsertOptionsetDB(ctx, session, &inOptionset)
+	err = h.InsertOptionsetDB(ctx, session, &inOptionset)
 	timemark.Mark("InsertOptionsetDB")
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("InsertSchedulePositionDB failed. [%v]", err))
@@ -136,7 +136,7 @@ func (s *Handler) InsertOptionset(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Router /api/v1/UpdateOptionset [post]
-func (s *Handler) UpdateOptionset(ctx *gin.Context) {
+func (h *Handler) UpdateOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "UpdateOptionset")()
 
@@ -157,7 +157,7 @@ func (s *Handler) UpdateOptionset(ctx *gin.Context) {
 	}
 	copier.Copy(&inOptionset, &articleForm)
 
-	err := s.UpdateOptionsetDB(ctx, session, &inOptionset)
+	err := h.UpdateOptionsetDB(ctx, session, &inOptionset)
 	timemark.Mark("UpdateOptionsetDB")
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("UpdateOptionsetDB failed. [%v]", err))
@@ -174,7 +174,7 @@ func (s *Handler) UpdateOptionset(ctx *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Router /api/v1/DeleteOptionset [post]
-func (s *Handler) DeleteOptionset(ctx *gin.Context) {
+func (h *Handler) DeleteOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "DeleteOptionset")()
 
@@ -187,7 +187,7 @@ func (s *Handler) DeleteOptionset(ctx *gin.Context) {
 		return
 	}
 
-	err := s.DeleteOptionsetDB(ctx, session, &where)
+	err := h.DeleteOptionsetDB(ctx, session, &where)
 	timemark.Mark("DeleteOptionsetDB")
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("DeleteOptionsetDB failed. [%v]", err))

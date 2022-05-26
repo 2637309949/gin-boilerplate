@@ -19,8 +19,8 @@ var (
 )
 
 //TokenValid ...
-func (s *Handler) TokenValid(ctx *gin.Context) {
-	tokenAuth, err := s.ExtractTokenMetadata(ctx.Request)
+func (h *Handler) TokenValid(ctx *gin.Context) {
+	tokenAuth, err := h.ExtractTokenMetadata(ctx.Request)
 	//Token either expired or not valid
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("Please login first"), http.StatusOption(http.StatusUnauthorized))
@@ -28,7 +28,7 @@ func (s *Handler) TokenValid(ctx *gin.Context) {
 		return
 	}
 
-	userID, err := s.FetchAuth(tokenAuth)
+	userID, err := h.FetchAuth(tokenAuth)
 	//Token does not exists in Redis (User logged out or expired)
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("Please login first"), http.StatusOption(http.StatusUnauthorized))
@@ -44,7 +44,7 @@ func (s *Handler) TokenValid(ctx *gin.Context) {
 }
 
 //Refresh ...
-func (s *Handler) Refresh(ctx *gin.Context) {
+func (h *Handler) Refresh(ctx *gin.Context) {
 	var tokenForm types.Token
 	if ctx.ShouldBindJSON(&tokenForm) != nil {
 		http.Fail(ctx, http.MsgOption("Invalid form"))
@@ -88,21 +88,21 @@ func (s *Handler) Refresh(ctx *gin.Context) {
 	}
 
 	//Delete the previous Refresh Token
-	err = s.DeleteAuth(refreshUUID)
+	err = h.DeleteAuth(refreshUUID)
 	if err != nil { //if any goes wrong
 		http.Fail(ctx, http.MsgOption("Invalid authorization, please login again"), http.StatusOption(http.StatusUnauthorized))
 		return
 	}
 
 	//Create new pairs of refresh and access tokens
-	ts, err := s.CreateToken(uint(userID))
+	ts, err := h.CreateToken(uint(userID))
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("Invalid authorization, please login again"), http.StatusOption(http.StatusUnauthorized))
 		return
 	}
 
 	//save the tokens metadata to redis
-	err = s.CreateAuth(uint(userID), ts)
+	err = h.CreateAuth(uint(userID), ts)
 	if err != nil {
 		http.Fail(ctx, http.MsgOption("Invalid authorization, please login again"), http.StatusOption(http.StatusUnauthorized))
 		return
@@ -115,7 +115,7 @@ func (s *Handler) Refresh(ctx *gin.Context) {
 }
 
 //CreateToken ...
-func (s *Handler) CreateToken(userID uint) (*types.TokenDetails, error) {
+func (h *Handler) CreateToken(userID uint) (*types.TokenDetails, error) {
 	td := &types.TokenDetails{}
 	td.AtExpires = time.Now().Add(time.Minute * 15).Unix()
 	td.AccessUUID = shortid.MustGenerate()
@@ -150,16 +150,16 @@ func (s *Handler) CreateToken(userID uint) (*types.TokenDetails, error) {
 }
 
 //CreateAuth ...
-func (s *Handler) CreateAuth(userid uint, td *types.TokenDetails) error {
+func (h *Handler) CreateAuth(userid uint, td *types.TokenDetails) error {
 	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
 	rt := time.Unix(td.RtExpires, 0)
 	now := time.Now()
 
-	err := s.Cache.Set(td.AccessUUID, strconv.Itoa(int(userid)), at.Sub(now))
+	err := h.Cache.Set(td.AccessUUID, strconv.Itoa(int(userid)), at.Sub(now))
 	if err != nil {
 		return err
 	}
-	err = s.Cache.Set(td.RefreshUUID, strconv.Itoa(int(userid)), rt.Sub(now))
+	err = h.Cache.Set(td.RefreshUUID, strconv.Itoa(int(userid)), rt.Sub(now))
 	if err != nil {
 		return err
 	}
@@ -167,8 +167,8 @@ func (s *Handler) CreateAuth(userid uint, td *types.TokenDetails) error {
 }
 
 //ExtractTokenMetadata ...
-func (s *Handler) ExtractTokenMetadata(r *http.Request) (*types.AccessDetails, error) {
-	token, err := s.VerifyToken(r)
+func (h *Handler) ExtractTokenMetadata(r *http.Request) (*types.AccessDetails, error) {
+	token, err := h.VerifyToken(r)
 	if err != nil {
 		return nil, err
 	}
@@ -191,9 +191,9 @@ func (s *Handler) ExtractTokenMetadata(r *http.Request) (*types.AccessDetails, e
 }
 
 //VerifyToken ...
-func (s *Handler) VerifyToken(r *http.Request) (*jwt.Token, error) {
+func (h *Handler) VerifyToken(r *http.Request) (*jwt.Token, error) {
 	//Make sure that the token method conform to "SigningMethodHMAC"
-	tokenString := s.ExtractToken(r)
+	tokenString := h.ExtractToken(r)
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -207,7 +207,7 @@ func (s *Handler) VerifyToken(r *http.Request) (*jwt.Token, error) {
 }
 
 //ExtractToken ...
-func (s *Handler) ExtractToken(r *http.Request) string {
+func (h *Handler) ExtractToken(r *http.Request) string {
 	//normally Authorization the_token_xxx
 	bearToken := r.Header.Get("Authorization")
 	strArr := strings.Split(bearToken, " ")
@@ -218,9 +218,9 @@ func (s *Handler) ExtractToken(r *http.Request) string {
 }
 
 //FetchAuth ...
-func (s *Handler) FetchAuth(authD *types.AccessDetails) (int64, error) {
+func (h *Handler) FetchAuth(authD *types.AccessDetails) (int64, error) {
 	var userid int64
-	err := s.Cache.Get(authD.AccessUUID, &userid)
+	err := h.Cache.Get(authD.AccessUUID, &userid)
 	if err != nil {
 		return 0, err
 	}
@@ -228,8 +228,8 @@ func (s *Handler) FetchAuth(authD *types.AccessDetails) (int64, error) {
 }
 
 //DeleteAuth ...
-func (s *Handler) DeleteAuth(givenUUID string) error {
-	err := s.Cache.Delete(givenUUID)
+func (h *Handler) DeleteAuth(givenUUID string) error {
+	err := h.Cache.Delete(givenUUID)
 	if err != nil {
 		return err
 	}
