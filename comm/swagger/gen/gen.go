@@ -134,7 +134,7 @@ func (g *Gen) Build(config *Config) error {
 
 	// log.Printf("create docs.go at %+v", docFileName)
 	// logrus.Printf("create swagger.json at %+v", jsonFileName)
-	logger.Infof(context.TODO(), "create swagger.yaml at %+v", yamlFileName)
+	// logger.Infof(context.TODO(), "create swagger.yaml at %+v", yamlFileName)
 
 	return nil
 }
