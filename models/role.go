@@ -6,11 +6,11 @@ import (
 
 type Role struct {
 	gorm.Model
-	Name       string `gorm:"type:varchar(25)"`
-	Code       string `gorm:"type:varchar(25)"`
-	Status     uint32 `gorm:"type:int(10); not null; default 0"`
-	AppIndex   string `gorm:"type:varchar(50)"`
-	AdminIndex string `gorm:"type:varchar(50)"`
+	Name       string `gorm:"type:varchar(25); not null; default:''"`
+	Code       string `gorm:"type:varchar(25); not null; default:''"`
+	Status     uint32 `gorm:"type:int(10); not null; default:0"`
+	AppIndex   string `gorm:"type:varchar(50); not null; default:''"`
+	AdminIndex string `gorm:"type:varchar(50); not null; default:''"`
 }
 
 // TableName table name of defined Role
