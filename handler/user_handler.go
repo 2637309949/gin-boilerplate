@@ -17,10 +17,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jordan-wright/email"
 	"github.com/teris-io/shortid"
-	"golang.org/x/crypto/bcrypt"
 )
 
-//Login ...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary Login
+// @Description user login
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/login [POST]
 func (h *Handler) Login(ctx *gin.Context) {
 	var session = db.GetDB()
 	var token types.Token
@@ -43,12 +48,8 @@ func (h *Handler) Login(ctx *gin.Context) {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
-	if ok, err := user.CompareHashAndPassword([]byte(loginForm.Password)); !ok || err != nil {
-		if !ok {
-			http.Fail(ctx, http.MsgOption("The account or password is incorrect"))
-			return
-		}
-		http.Fail(ctx, http.MsgOption(err.Error()))
+	if ok := user.CompareHashAndPassword(loginForm.Password); !ok {
+		http.Fail(ctx, http.MsgOption("The account or password is incorrect"))
 		return
 	}
 
@@ -65,15 +66,27 @@ func (h *Handler) Login(ctx *gin.Context) {
 		token.RefreshToken = tokenDetails.RefreshToken
 	}
 
-	tk := gin.H{
-		"user":  user,
-		"token": token,
+	profile := types.UserProfile{
+		Name:   user.Name,
+		Email:  user.Email,
+		Avatar: user.Avatar,
 	}
 
+	tk := gin.H{
+		"access_token":  token.AccessToken,
+		"refresh_token": token.RefreshToken,
+		"profile":       profile,
+	}
 	http.Success(ctx, http.FlatOption(tk))
 }
 
-//Register ...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary Register
+// @Description user register
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/register [POST]
 func (h *Handler) Register(ctx *gin.Context) {
 	var session = db.GetDB()
 	var registerForm types.RegisterForm
@@ -87,18 +100,19 @@ func (h *Handler) Register(ctx *gin.Context) {
 		Email: registerForm.Email,
 	}
 	user := models.User{
-		Name:     registerForm.Name,
-		Email:    registerForm.Email,
-		Password: registerForm.Password,
+		Name:  registerForm.Name,
+		Email: registerForm.Email,
 	}
 	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err == nil {
 		http.Fail(ctx, http.MsgOption("Email already exists"))
 		return
 	}
-	if err := user.GenerateFromPassword(bcrypt.DefaultCost); err != nil {
+	password, err := user.GenerateFromPassword(registerForm.Password)
+	if err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
+	user.Password = password
 	if err := h.InsertUserDB(ctx, session, &user); err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
@@ -108,7 +122,13 @@ func (h *Handler) Register(ctx *gin.Context) {
 	http.Success(ctx, http.DataOption(user))
 }
 
-//Logout ...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary Logout
+// @Description user logout
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/logout [POST]
 func (h *Handler) Logout(ctx *gin.Context) {
 	au, err := h.ExtractTokenMetadata(ctx.Request)
 	if err != nil {
@@ -124,7 +144,13 @@ func (h *Handler) Logout(ctx *gin.Context) {
 	http.Success(ctx, http.MsgOption("User not logged in"))
 }
 
-//UpdatePassword...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary Logout
+// @Description user updatePassword
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/updatePassword [POST]
 func (h *Handler) UpdatePassword(ctx *gin.Context) {
 	var session = db.GetDB()
 	var updatePasswordForm types.UpdatePasswordForm
@@ -150,20 +176,17 @@ func (h *Handler) UpdatePassword(ctx *gin.Context) {
 		return
 	}
 
-	if ok, err := user.CompareHashAndPassword([]byte(updatePasswordForm.OldPassword)); !ok || err != nil {
-		if !ok {
-			http.Fail(ctx, http.MsgOption("Wrong original password"))
-			return
-		}
-		http.Fail(ctx, http.MsgOption(err.Error()))
-		return
-	}
-	user.Password = updatePasswordForm.NewPassword
-	if err := user.GenerateFromPassword(bcrypt.DefaultCost); err != nil {
-		http.Fail(ctx, http.MsgOption(err.Error()))
+	if ok := user.CompareHashAndPassword(updatePasswordForm.OldPassword); !ok {
+		http.Fail(ctx, http.MsgOption("Wrong original password"))
 		return
 	}
 
+	password, err := user.GenerateFromPassword(updatePasswordForm.NewPassword)
+	if err != nil {
+		http.Fail(ctx, http.MsgOption(err.Error()))
+		return
+	}
+	user.Password = password
 	if err := h.UpdateUserDB(ctx, session, &user); err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
@@ -176,7 +199,13 @@ func (h *Handler) generateVerificationTokenStoreKey(token string) string {
 	return fmt.Sprintf("user/verification-token/%s", token)
 }
 
-//SendVerificationEmail...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary SendVerificationEmail
+// @Description send verification email
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/sendVerificationEmail [POST]
 func (h *Handler) SendVerificationEmail(ctx *gin.Context) {
 	var session = db.GetDB()
 	var sendVerificationEmailRequestForm types.SendVerificationEmailRequestForm
@@ -214,7 +243,13 @@ func (h *Handler) SendVerificationEmail(ctx *gin.Context) {
 	http.Success(ctx, http.MsgOption("SendVerificationEmail succeeded"))
 }
 
-//VerifyEmail...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary VerifyEmail
+// @Description verify email
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/verifyEmail [POST]
 func (h *Handler) VerifyEmail(ctx *gin.Context) {
 	var session = db.GetDB()
 	var verifyEmailRequestForm types.VerifyEmailRequestForm
@@ -248,7 +283,13 @@ func (h *Handler) VerifyEmail(ctx *gin.Context) {
 	http.Success(ctx, http.MsgOption("VerifyEmail succeeded"))
 }
 
-//SendPasswordResetEmail...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary SendPasswordResetEmail
+// @Description send password reset email
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/sendPasswordResetEmail [POST]
 func (h *Handler) SendPasswordResetEmail(ctx *gin.Context) {
 	var session = db.GetDB()
 	var sendPasswordResetEmailForm types.SendPasswordResetEmailForm
@@ -290,7 +331,13 @@ func (h *Handler) SendPasswordResetEmail(ctx *gin.Context) {
 	http.Success(ctx, http.MsgOption("SendPasswordResetEmail succeeded"))
 }
 
-//ResetPassword...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary ResetPassword
+// @Description reset password
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/resetPassword [POST]
 func (h *Handler) ResetPassword(ctx *gin.Context) {
 	var session = db.GetDB()
 	var resetPasswordRequestForm types.ResetPasswordRequestForm
@@ -317,12 +364,12 @@ func (h *Handler) ResetPassword(ctx *gin.Context) {
 	}
 
 	//update password
-	user.Password = resetPasswordRequestForm.NewPassword
-	if err := user.GenerateFromPassword(bcrypt.DefaultCost); err != nil {
+	password, err := user.GenerateFromPassword(resetPasswordRequestForm.NewPassword)
+	if err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
-
+	user.Password = password
 	if err := h.UpdateUserDB(ctx, session, &user); err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return

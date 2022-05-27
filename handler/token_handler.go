@@ -43,7 +43,13 @@ func (h *Handler) TokenValid(ctx *gin.Context) {
 	ctx.Next()
 }
 
-//Refresh ...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary Refresh
+// @Description refresh token
+// @Tags tokens
+// @Accept  json
+// @Produce  json
+// @Router /api/v1/refresh [POST]
 func (h *Handler) Refresh(ctx *gin.Context) {
 	var tokenForm types.Token
 	if ctx.ShouldBindJSON(&tokenForm) != nil {

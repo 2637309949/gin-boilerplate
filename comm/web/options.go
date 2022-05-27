@@ -17,6 +17,7 @@ type Option struct {
 	}
 	Swagger string
 	Metrics string
+	Sql     string
 }
 
 type OptFunc func(o *Option)
@@ -33,6 +34,13 @@ func DataBase(dialect string, args ...interface{}) OptFunc {
 func Swagger(dir string) OptFunc {
 	return func(o *Option) {
 		o.Swagger = dir
+	}
+}
+
+//Mock...
+func Mock(file string) OptFunc {
+	return func(o *Option) {
+		o.Sql = file
 	}
 }
 

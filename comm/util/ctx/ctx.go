@@ -13,7 +13,7 @@ import (
 
 func FromContext(ctx context.Context, patchMd ...metadata.Metadata) context.Context {
 	if _, _, ok := trace.FromContext(ctx); !ok {
-		ctx = trace.ToContext(ctx, util.RandStringRunes(10), util.RandStringRunes(10))
+		ctx = trace.ToContext(ctx, util.RandStringRunes(12), util.RandStringRunes(12))
 	}
 
 	for i := range patchMd {

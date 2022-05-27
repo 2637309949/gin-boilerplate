@@ -34,9 +34,10 @@ func main() {
 		web.Index(h.Index),
 		web.NoRoute(h.NoRoute),
 		web.Static("/public", "./public"),
+		web.Mock("./setup.sql"),
 		web.Swagger("handler"))
 
-	//user routes
+	//User routes
 	r.POST("/api/v1/user/login", h.Login)
 	r.GET("/api/v1/user/logout", h.Logout)
 	r.POST("/api/v1/user/register", h.Register)
@@ -48,10 +49,10 @@ func main() {
 	r.POST("/api/v1/user/sendPasswordResetEmail", h.SendPasswordResetEmail) //for sendPasswordResetEmail
 	r.POST("/api/v1/user/resetPassword", h.ResetPassword)                   //for resetPassword
 
-	//auth routes
+	//Auth routes
 	r.POST("/api/v1/token/refresh", h.Refresh)
 
-	//article routes
+	//Article routes
 	r.POST("/api/v1/article", middles.AuthMiddleware(h.TokenValid), h.InsertArticle)
 	r.GET("/api/v1/articles", middles.CachePage(h.Cache, time.Minute), h.QueryArticle)
 	r.GET("/api/v1/article/:id", middles.CachePage(h.Cache, time.Minute), h.QueryArticleDetail)

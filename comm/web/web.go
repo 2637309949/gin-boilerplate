@@ -18,6 +18,7 @@ func New(opts ...OptFunc) *gin.Engine {
 	//db set up
 	db.SetDsn(opt.Dialect, opt.DialectArgs...)
 	db.AutoMigrate(db.GetDB())
+	db.Exec(opt.Sql)
 
 	//web init
 	r := gin.New()

@@ -89,6 +89,12 @@ type RegisterForm struct {
 	Password string `form:"password" json:"password" binding:"required,min=3,max=50"`
 }
 
+type UserProfile struct {
+	Name   string `form:"name" json:"name"`
+	Email  string `form:"email" json:"email"`
+	Avatar string `form:"avatar" json:"avatar"`
+}
+
 //UserValidator ...
 type UserValidator struct{}
 

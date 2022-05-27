@@ -22,7 +22,7 @@ import (
 // @Param  page_size  query  int  true  "page size"
 // @Param  order_type  query  int  true  "order type"
 // @Param  order_col  query  int  true  "order col"
-// @Router /api/v1/QueryOptionset [get]
+// @Router /api/v1/queryOptionset [get]
 func (h *Handler) QueryOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryOptionset")()
@@ -67,7 +67,7 @@ func (h *Handler) QueryOptionset(ctx *gin.Context) {
 // @Tags optionsets
 // @Accept  json
 // @Produce  json
-// @Router /api/v1/QueryOptionsetDetail [get]
+// @Router /api/v1/queryOptionsetDetail [get]
 func (h *Handler) QueryOptionsetDetail(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryOptionsetDetail")()
@@ -99,7 +99,7 @@ func (h *Handler) QueryOptionsetDetail(ctx *gin.Context) {
 // @Tags optionsets
 // @Accept  json
 // @Produce  json
-// @Router /api/v1/InsertOptionset [post]
+// @Router /api/v1/insertOptionset [post]
 func (h *Handler) InsertOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "InsertOptionset")()
@@ -141,7 +141,7 @@ func (h *Handler) InsertOptionset(ctx *gin.Context) {
 // @Tags optionsets
 // @Accept  json
 // @Produce  json
-// @Router /api/v1/UpdateOptionset [post]
+// @Router /api/v1/updateOptionset [post]
 func (h *Handler) UpdateOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "UpdateOptionset")()
@@ -179,7 +179,7 @@ func (h *Handler) UpdateOptionset(ctx *gin.Context) {
 // @Tags optionsets
 // @Accept  json
 // @Produce  json
-// @Router /api/v1/DeleteOptionset [post]
+// @Router /api/v1/deleteOptionset [post]
 func (h *Handler) DeleteOptionset(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "DeleteOptionset")()

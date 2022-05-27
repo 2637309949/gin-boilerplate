@@ -22,7 +22,7 @@ import (
 // @Param  page_size  query  int  true  "page size"
 // @Param  order_type  query  int  true  "order type"
 // @Param  order_col  query  int  true  "order col"
-// @Router /api/v1/QueryArticle [get]
+// @Router /api/v1/queryArticle [get]
 func (h *Handler) QueryArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryArticle")()
@@ -66,7 +66,7 @@ func (h *Handler) QueryArticle(ctx *gin.Context) {
 // @Tags articles
 // @Accept  json
 // @Produce  json
-// @Router /api/v1/QueryArticleDetail [get]
+// @Router /api/v1/queryArticleDetail [get]
 func (h *Handler) QueryArticleDetail(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "QueryArticleDetail")()
@@ -98,7 +98,7 @@ func (h *Handler) QueryArticleDetail(ctx *gin.Context) {
 // @Tags articles
 // @Accept  json
 // @Produce  json
-// @Router /api/v1/InsertArticle [post]
+// @Router /api/v1/insertArticle [post]
 func (h *Handler) InsertArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "InsertArticle")()
@@ -140,7 +140,7 @@ func (h *Handler) InsertArticle(ctx *gin.Context) {
 // @Tags articles
 // @Accept  json
 // @Produce  json
-// @Router /api/v1/UpdateArticle [post]
+// @Router /api/v1/updateArticle [post]
 func (h *Handler) UpdateArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "UpdateArticle")()
@@ -178,7 +178,7 @@ func (h *Handler) UpdateArticle(ctx *gin.Context) {
 // @Tags articles
 // @Accept  json
 // @Produce  json
-// @Router /api/v1/DeleteArticle [post]
+// @Router /api/v1/deleteArticle [post]
 func (h *Handler) DeleteArticle(ctx *gin.Context) {
 	var timemark mark.TimeMark
 	defer timemark.Init(ctx.Request.Context(), "DeleteArticle")()

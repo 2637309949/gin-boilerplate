@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"gin-boilerplate/models"
+	"io/ioutil"
 
 	"github.com/jinzhu/gorm"
 )
@@ -65,4 +66,12 @@ func GetDB() *gorm.DB {
 //AutoMigrate runs gorm auto migration
 func AutoMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.User{}, &models.Article{})
+}
+
+//Exec runs gorm auto migration
+func Exec(file string) {
+	sqlByte, _ := ioutil.ReadFile(file)
+	if len(sqlByte) > 0 {
+		GetDB().Exec(string(sqlByte))
+	}
 }

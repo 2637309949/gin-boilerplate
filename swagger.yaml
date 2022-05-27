@@ -2,7 +2,7 @@ info:
   contact: {}
   license: {}
 paths:
-  /api/v1/DeleteArticle:
+  /api/v1/deleteArticle:
     post:
       consumes:
       - application/json
@@ -12,7 +12,7 @@ paths:
       summary: DeleteArticle
       tags:
       - articles
-  /api/v1/DeleteOptionset:
+  /api/v1/deleteOptionset:
     post:
       consumes:
       - application/json
@@ -22,7 +22,7 @@ paths:
       summary: DeleteOptionset
       tags:
       - optionsets
-  /api/v1/InsertArticle:
+  /api/v1/insertArticle:
     post:
       consumes:
       - application/json
@@ -32,7 +32,7 @@ paths:
       summary: InsertArticle
       tags:
       - articles
-  /api/v1/InsertOptionset:
+  /api/v1/insertOptionset:
     post:
       consumes:
       - application/json
@@ -42,7 +42,27 @@ paths:
       summary: InsertOptionset
       tags:
       - optionsets
-  /api/v1/QueryArticle:
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: user login
+      produces:
+      - application/json
+      summary: Login
+      tags:
+      - users
+  /api/v1/logout:
+    post:
+      consumes:
+      - application/json
+      description: user logout
+      produces:
+      - application/json
+      summary: Logout
+      tags:
+      - users
+  /api/v1/queryArticle:
     get:
       consumes:
       - application/json
@@ -73,7 +93,7 @@ paths:
       summary: QueryArticle
       tags:
       - articles
-  /api/v1/QueryArticleDetail:
+  /api/v1/queryArticleDetail:
     get:
       consumes:
       - application/json
@@ -83,7 +103,7 @@ paths:
       summary: QueryArticleDetail
       tags:
       - articles
-  /api/v1/QueryOptionset:
+  /api/v1/queryOptionset:
     get:
       consumes:
       - application/json
@@ -114,7 +134,67 @@ paths:
       summary: QueryOptionset
       tags:
       - optionsets
-  /api/v1/UpdateArticle:
+  /api/v1/queryOptionsetDetail:
+    get:
+      consumes:
+      - application/json
+      description: get optionset by gived id
+      produces:
+      - application/json
+      summary: QueryOptionsetDetail
+      tags:
+      - optionsets
+  /api/v1/refresh:
+    post:
+      consumes:
+      - application/json
+      description: refresh token
+      produces:
+      - application/json
+      summary: Refresh
+      tags:
+      - tokens
+  /api/v1/register:
+    post:
+      consumes:
+      - application/json
+      description: user register
+      produces:
+      - application/json
+      summary: Register
+      tags:
+      - users
+  /api/v1/resetPassword:
+    post:
+      consumes:
+      - application/json
+      description: reset password
+      produces:
+      - application/json
+      summary: ResetPassword
+      tags:
+      - users
+  /api/v1/sendPasswordResetEmail:
+    post:
+      consumes:
+      - application/json
+      description: send password reset email
+      produces:
+      - application/json
+      summary: SendPasswordResetEmail
+      tags:
+      - users
+  /api/v1/sendVerificationEmail:
+    post:
+      consumes:
+      - application/json
+      description: send verification email
+      produces:
+      - application/json
+      summary: SendVerificationEmail
+      tags:
+      - users
+  /api/v1/updateArticle:
     post:
       consumes:
       - application/json
@@ -124,7 +204,7 @@ paths:
       summary: UpdateArticle
       tags:
       - articles
-  /api/v1/UpdateOptionset:
+  /api/v1/updateOptionset:
     post:
       consumes:
       - application/json
@@ -134,6 +214,26 @@ paths:
       summary: UpdateOptionset
       tags:
       - optionsets
+  /api/v1/updatePassword:
+    post:
+      consumes:
+      - application/json
+      description: user updatePassword
+      produces:
+      - application/json
+      summary: Logout
+      tags:
+      - users
+  /api/v1/verifyEmail:
+    post:
+      consumes:
+      - application/json
+      description: verify email
+      produces:
+      - application/json
+      summary: VerifyEmail
+      tags:
+      - users
 securityDefinitions:
   "":
     authorizationUrl: ""
