@@ -7,7 +7,7 @@ import (
 
 type Option struct {
 	Dialect     string
-	DialectArgs []interface{}
+	DialectArgs []string
 	Index       gin.HandlerFunc
 	NoRoute     gin.HandlerFunc
 	Middlewares []gin.HandlerFunc
@@ -23,7 +23,7 @@ type Option struct {
 type OptFunc func(o *Option)
 
 //DataBase...
-func DataBase(dialect string, args ...interface{}) OptFunc {
+func DataBase(dialect string, args ...string) OptFunc {
 	return func(o *Option) {
 		o.DialectArgs = args
 		o.Dialect = dialect

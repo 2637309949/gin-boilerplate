@@ -50,9 +50,13 @@ func SetOrder(ctx context.Context, db *gorm.DB, o order, tb ...string) *gorm.DB 
 }
 
 //SetDsn establishes dsn  to database and saves its handler into db *sqlx.DB
-func SetDsn(dialect string, args ...interface{}) {
+func SetDsn(dialect string, args ...string) {
 	var err error
-	db, err = gorm.Open(dialect, args...)
+	argsStr := []interface{}{}
+	for i := range args {
+		argsStr = append(argsStr, args[i])
+	}
+	db, err = gorm.Open(dialect, argsStr...)
 	if err != nil {
 		panic(err)
 	}

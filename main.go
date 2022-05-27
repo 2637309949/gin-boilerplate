@@ -23,7 +23,7 @@ func main() {
 	//handler
 	h := handler.Handler{Cache: cache.DefaultStore}
 	r := web.New(web.Mode(gin.ReleaseMode),
-		web.DataBase(viper.GetString("db.dialect"), viper.GetString("db.args")),
+		web.DataBase(viper.GetString("db.dialect"), viper.GetStringSlice("db.args")...),
 		web.Validator(new(gonic.DefaultValidator)),
 		web.Middleware(ginprom.PromMiddleware(nil),
 			gonic.Logger(),
@@ -31,7 +31,7 @@ func main() {
 			middles.CORSMiddleware(),
 			middles.RequestIDMiddleware(),
 			gzip.Gzip(gzip.DefaultCompression)),
-		web.Metrics(viper.GetString("http.metrics")),
+		web.Metrics("/metrics"),
 		web.Index(h.Index),
 		web.NoRoute(h.NoRoute),
 		web.Static("/public", "./public"),
