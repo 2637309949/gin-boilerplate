@@ -37,8 +37,8 @@ func Swagger(dir string) OptFunc {
 	}
 }
 
-//Mock...
-func Mock(file string) OptFunc {
+//Sql...
+func Sql(file string) OptFunc {
 	return func(o *Option) {
 		o.Sql = file
 	}

@@ -34,7 +34,7 @@ func main() {
 		web.Index(h.Index),
 		web.NoRoute(h.NoRoute),
 		web.Static("/public", "./public"),
-		web.Mock("./setup.sql"),
+		web.Sql("./setup.sql"),
 		web.Swagger("handler"))
 
 	//User routes
