@@ -10,9 +10,8 @@ import (
 
 // defaultLogFormatter is the default log format function Logger middleware uses.
 var defaultLogFormatter = func(param gin.LogFormatterParams) string {
-	var statusColor, methodColor, resetColor string
+	var methodColor, resetColor string
 	if param.IsOutputColor() {
-		statusColor = param.StatusCodeColor()
 		methodColor = param.MethodColor()
 		resetColor = param.ResetColor()
 	}
@@ -21,11 +20,11 @@ var defaultLogFormatter = func(param gin.LogFormatterParams) string {
 		// Truncate in a golang < 1.8 safe way
 		param.Latency = param.Latency - param.Latency%time.Second
 	}
-	return fmt.Sprintf("%s %3d %s| %13v | %15s |%s %-7s %s %#v\n%s",
-		statusColor, param.StatusCode, resetColor,
+	return fmt.Sprintf("%3d %s| %11v | %12s |%s %-5s %v\n%s",
+		param.StatusCode, resetColor,
 		param.Latency,
 		param.ClientIP,
-		methodColor, param.Method, resetColor,
+		methodColor, param.Method,
 		param.Path,
 		param.ErrorMessage,
 	)
@@ -42,11 +41,6 @@ func LoggerWithConfig(conf gin.LoggerConfig) gin.HandlerFunc {
 	formatter := conf.Formatter
 	if formatter == nil {
 		formatter = defaultLogFormatter
-	}
-
-	out := conf.Output
-	if out == nil {
-		out = gin.DefaultWriter
 	}
 
 	notlogged := conf.SkipPaths

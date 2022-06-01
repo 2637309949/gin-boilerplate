@@ -29,7 +29,6 @@ require (
 	github.com/ugorji/go v1.2.6 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0
-	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	golang.org/x/tools v0.1.7
 	gopkg.in/yaml.v2 v2.4.0
 )
