@@ -5,17 +5,17 @@ import (
 	"gin-boilerplate/comm/errors"
 	"gin-boilerplate/models"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
-func (h *Handler) QueryOptionsetDB(ctx context.Context, session *gorm.DB, where *models.Optionset, list *[]models.Optionset, count ...*int32) error {
+func (h *Handler) QueryOptionsetDB(ctx context.Context, session *gorm.DB, where *models.Optionset, list *[]models.Optionset, count ...*int64) error {
 	session = session.Table(where.TableName()).Where(where).Find(list)
 	if len(count) > 0 {
 		session = session.Offset(0).Count(count[0])
 	}
 
-	if errs := session.GetErrors(); len(errs) != 0 {
-		return errors.New(errors.ERecordFindFailed, "查询Optionset失败. [%v]", errs)
+	if err := session.Error; err != nil {
+		return errors.New(errors.ERecordFindFailed, "查询Optionset失败. [%v]", err)
 	}
 	return nil
 }

@@ -5,7 +5,9 @@ import (
 	"gin-boilerplate/models"
 	"io/ioutil"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 var (
@@ -50,13 +52,16 @@ func SetOrder(ctx context.Context, db *gorm.DB, o order, tb ...string) *gorm.DB 
 }
 
 //SetDsn establishes dsn  to database and saves its handler into db *sqlx.DB
-func SetDsn(dialect string, args ...string) {
+func SetDsn(dialector string, dsn string) {
 	var err error
-	argsStr := []interface{}{}
-	for i := range args {
-		argsStr = append(argsStr, args[i])
+	var gd gorm.Dialector
+	switch dialector {
+	case "sqlite3", "sqlite":
+		gd = sqlite.Open(dsn)
+	case "mysql":
+		gd = mysql.Open(dsn)
 	}
-	db, err = gorm.Open(dialect, argsStr...)
+	db, err = gorm.Open(gd)
 	if err != nil {
 		panic(err)
 	}

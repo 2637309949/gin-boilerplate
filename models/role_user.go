@@ -1,13 +1,18 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"time"
+
+	"gorm.io/gorm"
 )
 
 type RoleUser struct {
-	gorm.Model
-	UserId uint32 `gorm:"type:bigint(20); not null"`
-	RoleId uint32 `gorm:"type:bigint(20); not null"`
+	ID        uint   `gorm:"primarykey"`
+	UserId    uint32 `gorm:"type:bigint(20); not null"`
+	RoleId    uint32 `gorm:"type:bigint(20); not null"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 // TableName table name of defined RoleUser

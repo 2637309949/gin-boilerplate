@@ -16,14 +16,13 @@ import (
 	"github.com/chenjiandongx/ginprom"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 func main() {
 	//handler
 	h := handler.Handler{Cache: cache.DefaultStore}
 	r := web.New(web.Mode(gin.ReleaseMode),
-		web.DataBase(viper.GetString("db.dialect"), viper.GetStringSlice("db.args")...),
+		web.DataBase(viper.GetString("db.dialect"), viper.GetString("db.dns")),
 		web.Validator(new(gonic.DefaultValidator)),
 		web.Middleware(ginprom.PromMiddleware(nil),
 			gonic.Logger(),

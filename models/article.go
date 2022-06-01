@@ -1,11 +1,13 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"time"
+
+	"gorm.io/gorm"
 )
 
 type Article struct {
-	gorm.Model
+	ID            uint   `gorm:"primarykey"`
 	Title         string `gorm:"type:varchar(100); not null; default: '' "`
 	Introduction  string `gorm:"type:varchar(255); not null; default: ''"`
 	ContentMd     string `gorm:"type:text"`
@@ -15,6 +17,9 @@ type Article struct {
 	User          *User
 	Tags          string `gorm:"type:varchar(255); not null; default: '' "`
 	ViewNum       int64  `gorm:"type:int(10); not null; default: 0"`
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
 // TableName sets the insert table name for this struct type

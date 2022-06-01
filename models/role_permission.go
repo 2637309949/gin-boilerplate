@@ -1,13 +1,18 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"time"
+
+	"gorm.io/gorm"
 )
 
 type RolePermission struct {
-	gorm.Model
+	ID           uint   `gorm:"primarykey"`
 	RoleId       uint32 `gorm:"type:bigint(20); not null"`
 	PermissionId uint32 `gorm:"type:bigint(20); not null"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	DeletedAt    gorm.DeletedAt `gorm:"index"`
 }
 
 func (m *RolePermission) TableName() string {

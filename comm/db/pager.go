@@ -6,13 +6,13 @@ import (
 )
 
 type LimitOffset interface {
-	GetOffset() int32
-	GetLimit() int32
+	GetOffset() int
+	GetLimit() int
 }
 
 type LimitPage interface {
-	GetPageSize() int32
-	GetPageNo() int32
+	GetPageSize() int
+	GetPageNo() int
 }
 
 func InitPage(ctx context.Context, itf LimitPage) {

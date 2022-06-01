@@ -37,7 +37,7 @@ func (h *Handler) QueryOptionset(ctx *gin.Context) {
 	session = db.SetOrder(ctx, session, &articleFilter)
 	timemark.Mark("InitDb")
 
-	var totalCount int32
+	var totalCount int64
 	var lst []models.Optionset
 	where := models.Optionset{
 		Name: articleFilter.Name,

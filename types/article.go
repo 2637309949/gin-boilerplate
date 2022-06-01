@@ -21,7 +21,7 @@ type ArticleForm struct {
 type ArticleFilter struct {
 	ArticleValidator
 	PageNo    int32  `form:"page_no" json:"page_no"`
-	PageSize  int32  `form:"page_size" json:"page_size"`
+	PageSize  int64  `form:"page_size" json:"page_size"`
 	OrderType int32  `form:"order_type" json:"order_type"`
 	OrderCol  string `form:"order_col" json:"order_col"`
 	Title     string `form:"title" json:"title" binding:"required"`
@@ -34,7 +34,7 @@ func (m *ArticleFilter) GetPageNo() int32 {
 	return 0
 }
 
-func (m *ArticleFilter) GetPageSize() int32 {
+func (m *ArticleFilter) GetPageSize() int64 {
 	if m != nil {
 		return m.PageSize
 	}

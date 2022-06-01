@@ -16,7 +16,7 @@ func New(opts ...OptFunc) *gin.Engine {
 	}
 
 	//db set up
-	db.SetDsn(opt.Dialect, opt.DialectArgs...)
+	db.SetDsn(opt.Dialect, opt.DNS)
 	db.AutoMigrate(db.GetDB())
 	db.Exec(opt.Sql)
 

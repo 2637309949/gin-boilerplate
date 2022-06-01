@@ -4,19 +4,23 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"fmt"
+	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type User struct {
-	gorm.Model
+	ID         uint   `gorm:"primarykey"`
 	Name       string `gorm:"type:varchar(25)"`
 	Password   string `gorm:"type:varchar(32); not null; default:''"`
 	Salt       string `gorm:"type:char(4); size:4; not null; default:''"`
-	Email      string `gorm:"type:varchar(100);unique_index"`
+	Email      string `gorm:"type:varchar(100);uniqueIndex"`
 	Profession string `gorm:"type:varchar(255); not null; default:''"`
 	Avatar     string `gorm:"type:varchar(255); not null; default:''"`
 	Verified   uint32 `gorm:"type:int(10); not null; default:0"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
 }
 
 // TableName sets the insert table name for this struct type

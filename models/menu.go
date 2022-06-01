@@ -1,11 +1,13 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"time"
+
+	"gorm.io/gorm"
 )
 
 type Menu struct {
-	gorm.Model
+	ID          uint   `gorm:"primarykey"`
 	Name        string `gorm:"type:varchar(50); not null; default:''"`
 	Code        string `gorm:"type:varchar(50); not null; default:''"`
 	Parent      uint32 `gorm:"type:bigint(20); not null; default:''"`
@@ -17,6 +19,9 @@ type Menu struct {
 	Icon        string `gorm:"type:varchar(120); not null; default:''"`
 	Order       uint32 `gorm:"type:int(100); not null"`
 	Hidden      uint32 `gorm:"type:int(20); not null"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
 
 func (m *Menu) TableName() string {

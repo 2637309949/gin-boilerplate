@@ -18,7 +18,7 @@ type OptionsetForm struct {
 type OptionsetFilter struct {
 	OptionsetValidator
 	PageNo    int32  `form:"page_no" json:"page_no"`
-	PageSize  int32  `form:"page_size" json:"page_size"`
+	PageSize  int64  `form:"page_size" json:"page_size"`
 	OrderType int32  `form:"order_type" json:"order_type"`
 	OrderCol  string `form:"order_col" json:"order_col"`
 	Name      string `form:"name" json:"name" binding:"required"`
@@ -31,7 +31,7 @@ func (m *OptionsetFilter) GetPageNo() int32 {
 	return 0
 }
 
-func (m *OptionsetFilter) GetPageSize() int32 {
+func (m *OptionsetFilter) GetPageSize() int64 {
 	if m != nil {
 		return m.PageSize
 	}

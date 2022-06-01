@@ -5,17 +5,17 @@ import (
 	"gin-boilerplate/comm/errors"
 	"gin-boilerplate/models"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
-func (h *Handler) QueryArticleDB(ctx context.Context, session *gorm.DB, where *models.Article, list *[]models.Article, count ...*int32) error {
+func (h *Handler) QueryArticleDB(ctx context.Context, session *gorm.DB, where *models.Article, list *[]models.Article, count ...*int64) error {
 	session = session.Table(where.TableName()).Where(where).Find(list)
 	if len(count) > 0 {
 		session = session.Offset(0).Count(count[0])
 	}
 
-	if errs := session.GetErrors(); len(errs) != 0 {
-		return errors.New(errors.ERecordFindFailed, "查询Article失败. [%v]", errs)
+	if err := session.Error; err != nil {
+		return errors.New(errors.ERecordFindFailed, "查询Article失败. [%v]", err)
 	}
 	return nil
 }

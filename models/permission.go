@@ -1,13 +1,18 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"time"
+
+	"gorm.io/gorm"
 )
 
 type Permission struct {
-	gorm.Model
-	Name string `gorm:"type:varchar(25); not null; default:''"`
-	Code string `gorm:"type:varchar(25); not null; default:''"`
+	ID        uint   `gorm:"primarykey"`
+	Name      string `gorm:"type:varchar(25); not null; default:''"`
+	Code      string `gorm:"type:varchar(25); not null; default:''"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 func (m *Permission) TableName() string {

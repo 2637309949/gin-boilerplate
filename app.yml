@@ -2,8 +2,7 @@ http:
   port: 8080
 db:
   dialect: sqlite3
-  args:
-    - ./sqlite.db
+  dns: sqlite.db
 smtp:
   addr: smtp.qq.com:25
   username: 2637309949@qq.com
