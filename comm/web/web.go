@@ -44,7 +44,7 @@ func (w *Web) Run(ctx context.Context, addr ...string) (err error) {
 	srv := endless.NewServer(address, w)
 	srv.BeforeBegin = DefaultBeforeBeginFunc
 	go func() {
-		logger.Infof(ctx, "%v/main listen and serve on 0.0.0.0%v", syscall.Getpid(), address)
+		logger.Infof(ctx, "Listen and serve %v/main on 0.0.0.0%v", syscall.Getpid(), address)
 		logger.Infof(ctx, "Exec `kill -1 %v` to graceful upgrade", syscall.Getpid())
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Error(ctx, err)
