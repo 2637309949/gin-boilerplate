@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"gin-boilerplate/comm/http"
+	"gin-boilerplate/comm/logger"
 	"gin-boilerplate/types"
 	"os"
 	"strconv"
@@ -20,10 +21,11 @@ var (
 
 //TokenValid ...
 func (h *Handler) TokenValid(ctx *gin.Context) {
-	tokenAuth, err := h.ExtractTokenMetadata(ctx.Request)
 	//Token either expired or not valid
+	tokenAuth, err := h.ExtractTokenMetadata(ctx.Request)
 	if err != nil {
-		http.Fail(ctx, http.MsgOption("Please login first"), http.StatusOption(http.StatusUnauthorized))
+		logger.Error(ctx.Request.Context(), err)
+		http.Unauthorized(ctx, http.MsgOption("Please login first"))
 		ctx.Abort()
 		return
 	}
@@ -31,7 +33,8 @@ func (h *Handler) TokenValid(ctx *gin.Context) {
 	userID, err := h.FetchAuth(tokenAuth)
 	//Token does not exists in Redis (User logged out or expired)
 	if err != nil {
-		http.Fail(ctx, http.MsgOption("Please login first"), http.StatusOption(http.StatusUnauthorized))
+		logger.Error(ctx.Request.Context(), err)
+		http.Unauthorized(ctx, http.MsgOption("Please login first"))
 		ctx.Abort()
 		return
 	}
@@ -52,10 +55,12 @@ func (h *Handler) TokenValid(ctx *gin.Context) {
 // @Router /api/v1/refresh [POST]
 func (h *Handler) Refresh(ctx *gin.Context) {
 	var tokenForm types.Token
-	if ctx.ShouldBindJSON(&tokenForm) != nil {
+	if err := ctx.ShouldBindJSON(&tokenForm); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("Invalid form"))
 		return
 	}
+
 	//verify the token
 	token, err := jwt.Parse(tokenForm.RefreshToken, func(token *jwt.Token) (interface{}, error) {
 		//Make sure that the token method conform to "SigningMethodHMAC"
@@ -67,57 +72,61 @@ func (h *Handler) Refresh(ctx *gin.Context) {
 
 	//if there is an error, the token must have expired
 	if err != nil {
-		http.Fail(ctx, http.MsgOption("Invalid authorization, please login again"), http.StatusOption(http.StatusUnauthorized))
+		logger.Error(ctx.Request.Context(), err)
+		http.Unauthorized(ctx, http.MsgOption("Invalid authorization, please login again"))
 		return
 	}
 	//is token valid?
 	if token != nil && !token.Valid {
-		http.Fail(ctx, http.MsgOption("Invalid authorization, please login again"), http.StatusOption(http.StatusUnauthorized))
+		http.Unauthorized(ctx, http.MsgOption("Invalid authorization, please login again"))
 		return
 	}
 
 	//Since token is valid, get the uuid:
 	claims, ok := token.Claims.(jwt.MapClaims) //the token claims should conform to MapClaims
 	if !ok || !token.Valid {
-		http.Fail(ctx, http.MsgOption("Invalid authorization, please login again"), http.StatusOption(http.StatusUnauthorized))
+		http.Unauthorized(ctx, http.MsgOption("Invalid authorization, please login again"))
 		return
 	}
 	refreshUUID, ok := claims["refresh_uuid"].(string) //convert the interface to string
 	if !ok {
-		http.Fail(ctx, http.MsgOption("Invalid authorization, please login again"), http.StatusOption(http.StatusUnauthorized))
+		http.Unauthorized(ctx, http.MsgOption("Invalid authorization, please login again"))
 		return
 	}
 	userID, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["user_id"]), 10, 64)
 	if err != nil {
-		http.Fail(ctx, http.MsgOption("Invalid authorization, please login again"), http.StatusOption(http.StatusUnauthorized))
+		logger.Error(ctx.Request.Context(), err)
+		http.Unauthorized(ctx, http.MsgOption("Invalid authorization, please login again"))
 		return
 	}
 
 	//Delete the previous Refresh Token
 	err = h.DeleteAuth(refreshUUID)
 	if err != nil { //if any goes wrong
-		http.Fail(ctx, http.MsgOption("Invalid authorization, please login again"), http.StatusOption(http.StatusUnauthorized))
+		logger.Error(ctx.Request.Context(), err)
+		http.Unauthorized(ctx, http.MsgOption("Invalid authorization, please login again"))
 		return
 	}
 
 	//Create new pairs of refresh and access tokens
 	ts, err := h.CreateToken(uint(userID))
 	if err != nil {
-		http.Fail(ctx, http.MsgOption("Invalid authorization, please login again"), http.StatusOption(http.StatusUnauthorized))
+		logger.Error(ctx.Request.Context(), err)
+		http.Unauthorized(ctx, http.MsgOption("Invalid authorization, please login again"))
 		return
 	}
 
 	//save the tokens metadata to redis
 	err = h.CreateAuth(uint(userID), ts)
 	if err != nil {
-		http.Fail(ctx, http.MsgOption("Invalid authorization, please login again"), http.StatusOption(http.StatusUnauthorized))
+		logger.Error(ctx.Request.Context(), err)
+		http.Unauthorized(ctx, http.MsgOption("Invalid authorization, please login again"))
 		return
 	}
-	tk := gin.H{
+	http.Success(ctx, http.FlatOption(gin.H{
 		"access_token":  ts.AccessToken,
 		"refresh_token": ts.RefreshToken,
-	}
-	http.Success(ctx, http.FlatOption(tk))
+	}))
 }
 
 //CreateToken ...

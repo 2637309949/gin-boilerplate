@@ -39,3 +39,8 @@ func Fail(ctx *gin.Context, opts ...Option) {
 	}, opts...)
 	Responser(ctx, opts...)
 }
+
+// Fail returns Failed field
+func Unauthorized(ctx *gin.Context, opts ...Option) {
+	Fail(ctx, append(opts, StatusOption(http.StatusUnauthorized))...)
+}

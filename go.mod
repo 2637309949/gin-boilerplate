@@ -6,6 +6,7 @@ require (
 	github.com/KyleBanks/depth v1.2.1
 	github.com/bradfitz/gomemcache v0.0.0-20220106215444-fb4bf637b56d
 	github.com/chenjiandongx/ginprom v0.0.0-20210617023641-6c809602c38a
+	github.com/fvbock/endless v0.0.0-20170109170031-447134032cb6
 	github.com/ghodss/yaml v1.0.0
 	github.com/gin-contrib/gzip v0.0.5
 	github.com/gin-gonic/gin v1.8.0

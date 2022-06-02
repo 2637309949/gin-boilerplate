@@ -31,6 +31,7 @@ func (h *Handler) Login(ctx *gin.Context) {
 	var token types.Token
 	var loginForm types.LoginForm
 	if err := ctx.ShouldBindJSON(&loginForm); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(loginForm.Login(err)))
 		return
 	}
@@ -45,6 +46,7 @@ func (h *Handler) Login(ctx *gin.Context) {
 			http.Fail(ctx, http.MsgOption("The account or password is incorrect"))
 			return
 		}
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -56,6 +58,7 @@ func (h *Handler) Login(ctx *gin.Context) {
 	//Generate the JWT auth token
 	tokenDetails, err := h.CreateToken(user.ID)
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -90,8 +93,9 @@ func (h *Handler) Login(ctx *gin.Context) {
 func (h *Handler) Register(ctx *gin.Context) {
 	var session = db.GetDB()
 	var registerForm types.RegisterForm
-	if validationErr := ctx.ShouldBindJSON(&registerForm); validationErr != nil {
-		http.Fail(ctx, http.MsgOption(registerForm.Register(validationErr)))
+	if err := ctx.ShouldBindJSON(&registerForm); err != nil {
+		logger.Error(ctx.Request.Context(), err)
+		http.Fail(ctx, http.MsgOption(registerForm.Register(err)))
 		return
 	}
 
@@ -109,11 +113,13 @@ func (h *Handler) Register(ctx *gin.Context) {
 	}
 	password, err := user.GenerateFromPassword(registerForm.Password)
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
 	user.Password = password
 	if err := h.InsertUserDB(ctx, session, &user); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -132,12 +138,14 @@ func (h *Handler) Register(ctx *gin.Context) {
 func (h *Handler) Logout(ctx *gin.Context) {
 	au, err := h.ExtractTokenMetadata(ctx.Request)
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("User not logged in"))
 		return
 	}
 
 	err = h.DeleteAuth(au.AccessUUID)
 	if err != nil { //if any goes wrong
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("Invalid request"))
 		return
 	}
@@ -155,11 +163,13 @@ func (h *Handler) UpdatePassword(ctx *gin.Context) {
 	var session = db.GetDB()
 	var updatePasswordForm types.UpdatePasswordForm
 	if err := ctx.ShouldBindJSON(&updatePasswordForm); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(updatePasswordForm.Login(err)))
 		return
 	}
 
 	if updatePasswordForm.NewPassword != updatePasswordForm.ConfirmPassword {
+		logger.Errorf(ctx.Request.Context(), "Passwords don't match")
 		http.Fail(ctx, http.MsgOption("Passwords don't match"))
 		return
 	}
@@ -169,6 +179,7 @@ func (h *Handler) UpdatePassword(ctx *gin.Context) {
 	user := models.User{}
 	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err != nil {
 		if errors.Is(err, errors.ERecordNotFound) {
+			logger.Errorf(ctx.Request.Context(), "The account was not found")
 			http.Fail(ctx, http.MsgOption("The account was not found"))
 			return
 		}
@@ -177,17 +188,20 @@ func (h *Handler) UpdatePassword(ctx *gin.Context) {
 	}
 
 	if ok := user.CompareHashAndPassword(updatePasswordForm.OldPassword); !ok {
+		logger.Errorf(ctx.Request.Context(), "Wrong original password")
 		http.Fail(ctx, http.MsgOption("Wrong original password"))
 		return
 	}
 
 	password, err := user.GenerateFromPassword(updatePasswordForm.NewPassword)
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
 	user.Password = password
 	if err := h.UpdateUserDB(ctx, session, &user); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -222,12 +236,14 @@ func (h *Handler) SendVerificationEmail(ctx *gin.Context) {
 			http.Fail(ctx, http.MsgOption("The account was not found"))
 			return
 		}
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
 
 	token := shortid.MustGenerate()
 	if err := h.Cache.Set(h.generateVerificationTokenStoreKey(token), user.ID, 10*time.Minute); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -254,6 +270,7 @@ func (h *Handler) VerifyEmail(ctx *gin.Context) {
 	var session = db.GetDB()
 	var verifyEmailRequestForm types.VerifyEmailRequestForm
 	if err := ctx.ShouldBindJSON(&verifyEmailRequestForm); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(verifyEmailRequestForm.VerifyEmail(err)))
 		return
 	}
@@ -272,11 +289,13 @@ func (h *Handler) VerifyEmail(ctx *gin.Context) {
 			http.Fail(ctx, http.MsgOption("The account was not found"))
 			return
 		}
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
 	user.Verified = 1
 	if err := h.UpdateUserDB(ctx, session, &user); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -305,6 +324,7 @@ func (h *Handler) SendPasswordResetEmail(ctx *gin.Context) {
 			http.Fail(ctx, http.MsgOption("The account was not found"))
 			return
 		}
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -319,12 +339,14 @@ func (h *Handler) SendPasswordResetEmail(ctx *gin.Context) {
 	// save the password reset code
 	_, err := h.savePasswordResetCode(ctx, user.ID, code, time.Duration(expiry)*time.Second)
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
 	// save the code in the database and then send via email
 	err = h.sendPasswordResetEmail(ctx, user.ID, code, sendPasswordResetEmailForm.FromName, sendPasswordResetEmailForm.Email, user.Name, sendPasswordResetEmailForm.Subject, sendPasswordResetEmailForm.TextContent)
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -342,6 +364,7 @@ func (h *Handler) ResetPassword(ctx *gin.Context) {
 	var session = db.GetDB()
 	var resetPasswordRequestForm types.ResetPasswordRequestForm
 	if err := ctx.ShouldBindJSON(&resetPasswordRequestForm); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(resetPasswordRequestForm.ResetPassword(err)))
 		return
 	}
@@ -353,12 +376,14 @@ func (h *Handler) ResetPassword(ctx *gin.Context) {
 			http.Fail(ctx, http.MsgOption("The account was not found"))
 			return
 		}
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
 
 	//check code
 	if _, err := h.readPasswordResetCode(ctx, user.ID, resetPasswordRequestForm.Code); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -366,11 +391,13 @@ func (h *Handler) ResetPassword(ctx *gin.Context) {
 	//update password
 	password, err := user.GenerateFromPassword(resetPasswordRequestForm.NewPassword)
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
 	user.Password = password
 	if err := h.UpdateUserDB(ctx, session, &user); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -390,7 +417,6 @@ func (h *Handler) sendVerificationEmail(ctx context.Context, fromName, toAddress
 		Text:    []byte(textContent),
 	}
 	err := h.sendEmail(ctx, &email)
-	fmt.Println(email)
 	return err
 }
 
@@ -422,7 +448,6 @@ func (h *Handler) savePasswordResetCode(ctx context.Context, userId uint, code s
 	if err := h.Cache.Set(h.generatePasswordResetCodeStoreKey(userId, code), pwcode, expiry); err != nil {
 		return nil, err
 	}
-
 	return &pwcode, nil
 }
 
@@ -438,6 +463,5 @@ func (h *Handler) readPasswordResetCode(ctx context.Context, userId uint, code s
 	if pwcode.Expires.Before(time.Now()) {
 		return nil, errors.New(errors.ENone, "password reset code expired")
 	}
-
 	return &pwcode, nil
 }

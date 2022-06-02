@@ -6,7 +6,6 @@ import (
 	"gin-boilerplate/comm/cache"
 	"gin-boilerplate/comm/gonic"
 	"gin-boilerplate/comm/http"
-	"gin-boilerplate/comm/logger"
 	"gin-boilerplate/comm/middles"
 	"gin-boilerplate/comm/viper"
 	"gin-boilerplate/comm/web"
@@ -60,6 +59,5 @@ func main() {
 	r.Handle(http.MethodDelete, "/api/v1/article/:id", middles.AuthMiddleware(h.TokenValid), h.DeleteArticle)
 
 	//start
-	logger.Infof(context.TODO(), "listen and serve on 0.0.0.0:%v", viper.GetString("http.port"))
-	r.Run(fmt.Sprintf(":%v", viper.GetString("http.port")))
+	r.Run(context.TODO(), fmt.Sprintf(":%v", viper.GetString("http.port")))
 }

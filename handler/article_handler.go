@@ -3,6 +3,7 @@ package handler
 import (
 	"gin-boilerplate/comm/db"
 	"gin-boilerplate/comm/http"
+	"gin-boilerplate/comm/logger"
 	"gin-boilerplate/comm/mark"
 	"gin-boilerplate/comm/util"
 	"gin-boilerplate/models"
@@ -28,6 +29,7 @@ func (h *Handler) QueryArticle(ctx *gin.Context) {
 	defer timemark.Init(ctx.Request.Context(), "QueryArticle")()
 	var articleFilter types.ArticleFilter
 	if err := ctx.Bind(&articleFilter); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(articleFilter.Filter(err)))
 		return
 	}
@@ -44,6 +46,7 @@ func (h *Handler) QueryArticle(ctx *gin.Context) {
 	err := h.QueryArticleDB(ctx, session, &where, &lst, &totalCount)
 	timemark.Mark("QueryArticleDB")
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("QueryArticleDB failed. [%s]", err.Error()))
 		return
 	}
@@ -78,6 +81,7 @@ func (h *Handler) QueryArticleDetail(ctx *gin.Context) {
 	where := models.Article{}
 	where.ID = util.MustUInt(ctx.Param("id"))
 	if where.ID == 0 {
+		logger.Errorf(ctx.Request.Context(), "ID is not set")
 		http.Fail(ctx, http.MsgOption("ID is not set"))
 		return
 	}
@@ -85,6 +89,7 @@ func (h *Handler) QueryArticleDetail(ctx *gin.Context) {
 	err := h.QueryArticleDetailDB(ctx, session, &where, &inArticle)
 	timemark.Mark("QueryArticleDetailDB")
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("QueryArticleDetailDB failed. [%s]", err.Error()))
 		return
 	}
@@ -108,6 +113,7 @@ func (h *Handler) InsertArticle(ctx *gin.Context) {
 
 	var articleForm types.ArticleForm
 	if err := ctx.ShouldBindJSON(&articleForm); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(articleForm.Insert(err)))
 		return
 	}
@@ -120,6 +126,7 @@ func (h *Handler) InsertArticle(ctx *gin.Context) {
 	err := h.QueryArticleDetailDB(ctx, session, &where, &inArticle)
 	timemark.Mark("QueryArticleDetailDB")
 	if err == nil {
+		logger.Errorf(ctx.Request.Context(), "Record already exists")
 		http.Fail(ctx, http.MsgOption("Record already exists"))
 		return
 	}
@@ -127,6 +134,7 @@ func (h *Handler) InsertArticle(ctx *gin.Context) {
 	err = h.InsertArticleDB(ctx, session, &inArticle)
 	timemark.Mark("InsertArticleDB")
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("InsertSchedulePositionDB failed. [%v]", err))
 		return
 	}
@@ -151,12 +159,14 @@ func (h *Handler) UpdateArticle(ctx *gin.Context) {
 	inArticle := models.Article{}
 	inArticle.ID = util.MustUInt(ctx.Param("id"))
 	if inArticle.ID == 0 {
+		logger.Errorf(ctx.Request.Context(), "ID is not set")
 		http.Fail(ctx, http.MsgOption("ID is not set"))
 		return
 	}
 
 	var articleForm types.ArticleForm
 	if err := ctx.ShouldBindJSON(&articleForm); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(articleForm.Insert(err)))
 		return
 	}
@@ -165,6 +175,7 @@ func (h *Handler) UpdateArticle(ctx *gin.Context) {
 	err := h.UpdateArticleDB(ctx, session, &inArticle)
 	timemark.Mark("UpdateArticleDB")
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("UpdateArticleDB failed. [%v]", err))
 		return
 	}
@@ -188,6 +199,7 @@ func (h *Handler) DeleteArticle(ctx *gin.Context) {
 	where := models.Article{}
 	where.ID = util.MustUInt(ctx.Param("id"))
 	if where.ID == 0 {
+		logger.Errorf(ctx.Request.Context(), "ID is not set")
 		http.Fail(ctx, http.MsgOption("ID is not set"))
 		return
 	}
@@ -195,6 +207,7 @@ func (h *Handler) DeleteArticle(ctx *gin.Context) {
 	err := h.DeleteArticleDB(ctx, session, &where)
 	timemark.Mark("DeleteArticleDB")
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("DeleteArticleDB failed. [%v]", err))
 		return
 	}

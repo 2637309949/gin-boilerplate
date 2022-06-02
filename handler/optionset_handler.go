@@ -3,6 +3,7 @@ package handler
 import (
 	"gin-boilerplate/comm/db"
 	"gin-boilerplate/comm/http"
+	"gin-boilerplate/comm/logger"
 	"gin-boilerplate/comm/mark"
 	"gin-boilerplate/comm/util"
 	"gin-boilerplate/models"
@@ -29,6 +30,7 @@ func (h *Handler) QueryOptionset(ctx *gin.Context) {
 
 	var articleFilter types.OptionsetFilter
 	if err := ctx.Bind(&articleFilter); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(articleFilter.Filter(err)))
 		return
 	}
@@ -45,6 +47,7 @@ func (h *Handler) QueryOptionset(ctx *gin.Context) {
 	err := h.QueryOptionsetDB(ctx, session, &where, &lst, &totalCount)
 	timemark.Mark("QueryOptionsetDB")
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("QueryOptionsetDB failed. [%s]", err.Error()))
 		return
 	}
@@ -79,6 +82,7 @@ func (h *Handler) QueryOptionsetDetail(ctx *gin.Context) {
 	where := models.Optionset{}
 	where.ID = util.MustUInt(ctx.Param("id"))
 	if where.ID == 0 {
+		logger.Errorf(ctx.Request.Context(), "ID is not set")
 		http.Fail(ctx, http.MsgOption("ID is not set"))
 		return
 	}
@@ -86,6 +90,7 @@ func (h *Handler) QueryOptionsetDetail(ctx *gin.Context) {
 	err := h.QueryOptionsetDetailDB(ctx, session, &where, &inOptionset)
 	timemark.Mark("QueryOptionsetDetailDB")
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("QueryOptionsetDetailDB failed. [%s]", err.Error()))
 		return
 	}
@@ -109,6 +114,7 @@ func (h *Handler) InsertOptionset(ctx *gin.Context) {
 
 	var articleForm types.OptionsetForm
 	if err := ctx.ShouldBindJSON(&articleForm); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(articleForm.Insert(err)))
 		return
 	}
@@ -121,6 +127,7 @@ func (h *Handler) InsertOptionset(ctx *gin.Context) {
 	err := h.QueryOptionsetDetailDB(ctx, session, &where, &inOptionset)
 	timemark.Mark("QueryOptionsetDetailDB")
 	if err == nil {
+		logger.Errorf(ctx.Request.Context(), "Record already exists")
 		http.Fail(ctx, http.MsgOption("Record already exists"))
 		return
 	}
@@ -128,6 +135,7 @@ func (h *Handler) InsertOptionset(ctx *gin.Context) {
 	err = h.InsertOptionsetDB(ctx, session, &inOptionset)
 	timemark.Mark("InsertOptionsetDB")
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("InsertSchedulePositionDB failed. [%v]", err))
 		return
 	}
@@ -152,12 +160,14 @@ func (h *Handler) UpdateOptionset(ctx *gin.Context) {
 	inOptionset := models.Optionset{}
 	inOptionset.ID = util.MustUInt(ctx.Param("id"))
 	if inOptionset.ID == 0 {
+		logger.Errorf(ctx.Request.Context(), "ID is not set")
 		http.Fail(ctx, http.MsgOption("ID is not set"))
 		return
 	}
 
 	var articleForm types.OptionsetForm
 	if err := ctx.ShouldBindJSON(&articleForm); err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(articleForm.Insert(err)))
 		return
 	}
@@ -166,6 +176,7 @@ func (h *Handler) UpdateOptionset(ctx *gin.Context) {
 	err := h.UpdateOptionsetDB(ctx, session, &inOptionset)
 	timemark.Mark("UpdateOptionsetDB")
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("UpdateOptionsetDB failed. [%v]", err))
 		return
 	}
@@ -189,6 +200,7 @@ func (h *Handler) DeleteOptionset(ctx *gin.Context) {
 	where := models.Optionset{}
 	where.ID = util.MustUInt(ctx.Param("id"))
 	if where.ID == 0 {
+		logger.Errorf(ctx.Request.Context(), "ID is not set")
 		http.Fail(ctx, http.MsgOption("ID is not set"))
 		return
 	}
@@ -196,6 +208,7 @@ func (h *Handler) DeleteOptionset(ctx *gin.Context) {
 	err := h.DeleteOptionsetDB(ctx, session, &where)
 	timemark.Mark("DeleteOptionsetDB")
 	if err != nil {
+		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption("DeleteOptionsetDB failed. [%v]", err))
 		return
 	}
