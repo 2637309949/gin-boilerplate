@@ -1,6 +1,15 @@
 ## gin-boilerplate
 
-### Login
+### Feature
+
+- TraceId/RequestId for all access
+- Standard restful response
+- Configurable cache middleware
+- Automatically generate Swagger documents
+- Metrics interface
+- Zero downtime restarts or upgrades
+
+#### Login
 
 ```shell
 curl -X POST \
@@ -12,7 +21,7 @@ http://192.168.202.128:8080/api/v1/user/login \
 }'
 ```
 
-### Refresh
+#### Refresh
 
 ```shell
 curl -X POST \

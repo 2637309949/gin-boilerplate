@@ -19,6 +19,7 @@ import (
 
 func main() {
 	//handler
+	todo := context.TODO()
 	h := handler.Handler{Cache: cache.DefaultStore}
 	r := web.New(web.Mode(gin.ReleaseMode),
 		web.DataBase(viper.GetString("db.dialect"), viper.GetString("db.dns")),
@@ -59,5 +60,5 @@ func main() {
 	r.Handle(http.MethodDelete, "/api/v1/article/:id", middles.AuthMiddleware(h.TokenValid), h.DeleteArticle)
 
 	//start
-	r.Run(context.TODO(), fmt.Sprintf(":%v", viper.GetString("http.port")))
+	r.Run(todo, fmt.Sprintf(":%v", viper.GetString("http.port")))
 }

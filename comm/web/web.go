@@ -17,6 +17,10 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+var (
+	DefaultBeforeBeginFunc = func(addr string) {}
+)
+
 func resolveAddress(addr []string) string {
 	switch len(addr) {
 	case 0:
@@ -38,10 +42,10 @@ type Web struct {
 func (w *Web) Run(ctx context.Context, addr ...string) (err error) {
 	address := resolveAddress(addr)
 	srv := endless.NewServer(address, w)
-	srv.BeforeBegin = func(addr string) {}
+	srv.BeforeBegin = DefaultBeforeBeginFunc
 	go func() {
 		logger.Infof(ctx, "%v/main listen and serve on 0.0.0.0%v", syscall.Getpid(), address)
-		logger.Infof(ctx, "kill -1 %v to graceful restart or upgrade", syscall.Getpid())
+		logger.Infof(ctx, "Exec `kill -1 %v` to graceful upgrade", syscall.Getpid())
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Error(ctx, err)
 		}
