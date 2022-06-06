@@ -6,6 +6,7 @@ require (
 	github.com/KyleBanks/depth v1.2.1
 	github.com/bradfitz/gomemcache v0.0.0-20220106215444-fb4bf637b56d
 	github.com/chenjiandongx/ginprom v0.0.0-20210617023641-6c809602c38a
+	github.com/fortytw2/leaktest v1.3.0 // indirect
 	github.com/fvbock/endless v0.0.0-20170109170031-447134032cb6
 	github.com/ghodss/yaml v1.0.0
 	github.com/gin-contrib/gzip v0.0.5
@@ -18,6 +19,7 @@ require (
 	github.com/jinzhu/copier v0.3.5
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/memcachier/mc/v3 v3.0.3
+	github.com/olivere/elastic v6.2.37+incompatible
 	github.com/prometheus/client_golang v1.12.2
 	github.com/robfig/go-cache v0.0.0-20130306151617-9fc39e0dbf62
 	github.com/spf13/viper v1.12.0
