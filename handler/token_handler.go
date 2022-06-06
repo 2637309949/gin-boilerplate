@@ -30,8 +30,8 @@ func (h *Handler) TokenValid(ctx *gin.Context) {
 		return
 	}
 
-	userID, err := h.FetchAuth(tokenAuth)
 	//Token does not exists in Redis (User logged out or expired)
+	userID, err := h.FetchAuth(tokenAuth)
 	if err != nil {
 		logger.Error(ctx.Request.Context(), err)
 		http.Unauthorized(ctx, http.MsgOption("Please login first"))
@@ -123,6 +123,7 @@ func (h *Handler) Refresh(ctx *gin.Context) {
 		http.Unauthorized(ctx, http.MsgOption("Invalid authorization, please login again"))
 		return
 	}
+
 	http.Success(ctx, http.FlatOption(gin.H{
 		"access_token":  ts.AccessToken,
 		"refresh_token": ts.RefreshToken,

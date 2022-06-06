@@ -37,10 +37,9 @@ func (h *Handler) Login(ctx *gin.Context) {
 	}
 
 	//Check if exit
-	where := models.User{
+	where, user := models.User{
 		Email: loginForm.Email,
-	}
-	user := models.User{}
+	}, models.User{}
 	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err != nil {
 		if errors.Is(err, errors.ERecordNotFound) {
 			http.Fail(ctx, http.MsgOption("The account or password is incorrect"))
@@ -69,18 +68,15 @@ func (h *Handler) Login(ctx *gin.Context) {
 		token.RefreshToken = tokenDetails.RefreshToken
 	}
 
-	profile := types.UserProfile{
-		Name:   user.Name,
-		Email:  user.Email,
-		Avatar: user.Avatar,
-	}
-
-	tk := gin.H{
+	http.Success(ctx, http.FlatOption(gin.H{
 		"access_token":  token.AccessToken,
 		"refresh_token": token.RefreshToken,
-		"profile":       profile,
-	}
-	http.Success(ctx, http.FlatOption(tk))
+		"profile": types.UserProfile{
+			Name:   user.Name,
+			Email:  user.Email,
+			Avatar: user.Avatar,
+		},
+	}))
 }
 
 // ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
@@ -100,10 +96,9 @@ func (h *Handler) Register(ctx *gin.Context) {
 	}
 
 	//Check if exit
-	where := models.User{
+	where, user := models.User{
 		Email: registerForm.Email,
-	}
-	user := models.User{
+	}, models.User{
 		Name:  registerForm.Name,
 		Email: registerForm.Email,
 	}
@@ -174,9 +169,8 @@ func (h *Handler) UpdatePassword(ctx *gin.Context) {
 		return
 	}
 
-	where := models.User{}
+	where, user := models.User{}, models.User{}
 	where.ID = updatePasswordForm.UserId
-	user := models.User{}
 	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err != nil {
 		if errors.Is(err, errors.ERecordNotFound) {
 			logger.Errorf(ctx.Request.Context(), "The account was not found")
@@ -228,9 +222,8 @@ func (h *Handler) SendVerificationEmail(ctx *gin.Context) {
 		return
 	}
 
-	where := models.User{}
+	where, user := models.User{}, models.User{}
 	where.Email = sendVerificationEmailRequestForm.Email
-	user := models.User{}
 	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err != nil {
 		if errors.Is(err, errors.ERecordNotFound) {
 			http.Fail(ctx, http.MsgOption("The account was not found"))

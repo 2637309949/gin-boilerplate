@@ -119,10 +119,9 @@ func (h *Handler) InsertOptionset(ctx *gin.Context) {
 		return
 	}
 
-	inOptionset := models.Optionset{}
-	where := models.Optionset{
+	where, inOptionset := models.Optionset{
 		Name: articleForm.Name,
-	}
+	}, models.Optionset{}
 	copier.Copy(&inOptionset, &articleForm)
 	err := h.QueryOptionsetDetailDB(ctx, session, &where, &inOptionset)
 	timemark.Mark("QueryOptionsetDetailDB")

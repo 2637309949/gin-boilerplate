@@ -38,11 +38,9 @@ func (h *Handler) QueryArticle(ctx *gin.Context) {
 	session = db.SetOrder(ctx, session, &articleFilter)
 	timemark.Mark("InitDb")
 
-	var totalCount int64
-	var lst []models.Article
-	where := models.Article{
+	where, lst, totalCount := models.Article{
 		Title: articleFilter.Title,
-	}
+	}, []models.Article{}, int64(0)
 	err := h.QueryArticleDB(ctx, session, &where, &lst, &totalCount)
 	timemark.Mark("QueryArticleDB")
 	if err != nil {
@@ -77,8 +75,7 @@ func (h *Handler) QueryArticleDetail(ctx *gin.Context) {
 	var session = db.GetDB()
 	timemark.Mark("InitDb")
 
-	inArticle := models.Article{}
-	where := models.Article{}
+	inArticle, where := models.Article{}, models.Article{}
 	where.ID = util.MustUInt(ctx.Param("id"))
 	if where.ID == 0 {
 		logger.Errorf(ctx.Request.Context(), "ID is not set")
@@ -118,10 +115,9 @@ func (h *Handler) InsertArticle(ctx *gin.Context) {
 		return
 	}
 
-	inArticle := models.Article{}
-	where := models.Article{
+	where, inArticle := models.Article{
 		Title: articleForm.Title,
-	}
+	}, models.Article{}
 	copier.Copy(&inArticle, &articleForm)
 	err := h.QueryArticleDetailDB(ctx, session, &where, &inArticle)
 	timemark.Mark("QueryArticleDetailDB")
