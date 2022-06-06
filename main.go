@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"gin-boilerplate/comm/cache"
 	"gin-boilerplate/comm/gonic"
 	"gin-boilerplate/comm/http"
 	"gin-boilerplate/comm/middles"
+	"gin-boilerplate/comm/store"
 	"gin-boilerplate/comm/viper"
 	"gin-boilerplate/comm/web"
 	"gin-boilerplate/handler"
@@ -20,7 +20,7 @@ import (
 func main() {
 	//handler
 	todo := context.TODO()
-	h := handler.Handler{Cache: cache.DefaultStore}
+	h := handler.Handler{Store: store.DefaultStore}
 	r := web.New(web.Mode(gin.ReleaseMode),
 		web.DataBase(viper.GetString("db.dialect"), viper.GetString("db.dns")),
 		web.Validator(new(gonic.DefaultValidator)),
@@ -54,8 +54,8 @@ func main() {
 
 	//Article routes
 	r.Handle(http.MethodPost, "/api/v1/article", middles.AuthMiddleware(h.TokenValid), h.InsertArticle)
-	r.Handle(http.MethodGet, "/api/v1/articles", middles.CachePage(h.Cache, time.Minute), h.QueryArticle)
-	r.Handle(http.MethodGet, "/api/v1/article/:id", middles.CachePage(h.Cache, time.Minute), h.QueryArticleDetail)
+	r.Handle(http.MethodGet, "/api/v1/articles", middles.CachePage(h.Store, time.Minute), h.QueryArticle)
+	r.Handle(http.MethodGet, "/api/v1/article/:id", middles.CachePage(h.Store, time.Minute), h.QueryArticleDetail)
 	r.Handle(http.MethodPut, "/api/v1/article/:id", middles.AuthMiddleware(h.TokenValid), h.UpdateArticle)
 	r.Handle(http.MethodDelete, "/api/v1/article/:id", middles.AuthMiddleware(h.TokenValid), h.DeleteArticle)
 

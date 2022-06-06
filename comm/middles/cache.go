@@ -11,8 +11,8 @@ import (
 	"net/url"
 	"time"
 
-	"gin-boilerplate/comm/cache"
 	"gin-boilerplate/comm/logger"
+	mStore "gin-boilerplate/comm/store"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,7 +29,7 @@ type cachedWriter struct {
 	gin.ResponseWriter
 	status  int
 	written bool
-	store   cache.CacheStore
+	store   mStore.CacheStore
 	expire  time.Duration
 	key     string
 }
@@ -58,7 +58,7 @@ func urlEscape(prefix string, u string) string {
 	return buffer.String()
 }
 
-func newCachedWriter(store cache.CacheStore, expire time.Duration, writer gin.ResponseWriter, key string) *cachedWriter {
+func newCachedWriter(store mStore.CacheStore, expire time.Duration, writer gin.ResponseWriter, key string) *cachedWriter {
 	return &cachedWriter{writer, 0, false, store, expire, key}
 }
 
@@ -116,13 +116,13 @@ func (w *cachedWriter) WriteString(data string) (n int, err error) {
 }
 
 // CachePage Decorator
-func CachePage(store cache.CacheStore, expire time.Duration) gin.HandlerFunc {
+func CachePage(store mStore.CacheStore, expire time.Duration) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var rsp responseCache
 		url := c.Request.URL
 		key := CreateKey(url.RequestURI())
 		if err := store.Get(key, &rsp); err != nil {
-			if err != cache.ErrCacheMiss {
+			if err != mStore.ErrCacheMiss {
 				logger.Error(c.Request.Context(), err.Error())
 			}
 			writer := newCachedWriter(store, expire, c.Writer, key)
@@ -147,7 +147,7 @@ func CachePage(store cache.CacheStore, expire time.Duration) gin.HandlerFunc {
 }
 
 // Cache middles
-func Cache(store cache.CacheStore, time time.Duration) gin.HandlerFunc {
+func Cache(store mStore.CacheStore, time time.Duration) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		CachePage(store, time)(ctx)
 	}

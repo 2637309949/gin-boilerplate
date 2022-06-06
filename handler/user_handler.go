@@ -3,11 +3,11 @@ package handler
 import (
 	"context"
 	"fmt"
-	"gin-boilerplate/comm/cache"
 	"gin-boilerplate/comm/db"
 	"gin-boilerplate/comm/errors"
 	"gin-boilerplate/comm/http"
 	"gin-boilerplate/comm/logger"
+	"gin-boilerplate/comm/store"
 	"gin-boilerplate/models"
 	"gin-boilerplate/types"
 	"net/url"
@@ -235,7 +235,7 @@ func (h *Handler) SendVerificationEmail(ctx *gin.Context) {
 	}
 
 	token := shortid.MustGenerate()
-	if err := h.Cache.Set(h.generateVerificationTokenStoreKey(token), user.ID, 10*time.Minute); err != nil {
+	if err := h.Store.Set(h.generateVerificationTokenStoreKey(token), user.ID, 10*time.Minute); err != nil {
 		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
@@ -269,7 +269,7 @@ func (h *Handler) VerifyEmail(ctx *gin.Context) {
 	}
 
 	userId := uint(0)
-	if err := h.Cache.Get(h.generateVerificationTokenStoreKey(verifyEmailRequestForm.Token), &userId); err != nil {
+	if err := h.Store.Get(h.generateVerificationTokenStoreKey(verifyEmailRequestForm.Token), &userId); err != nil {
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
 	}
@@ -438,7 +438,7 @@ func (h *Handler) savePasswordResetCode(ctx context.Context, userId uint, code s
 		Code:    code,
 	}
 
-	if err := h.Cache.Set(h.generatePasswordResetCodeStoreKey(userId, code), pwcode, expiry); err != nil {
+	if err := h.Store.Set(h.generatePasswordResetCodeStoreKey(userId, code), pwcode, expiry); err != nil {
 		return nil, err
 	}
 	return &pwcode, nil
@@ -447,8 +447,8 @@ func (h *Handler) savePasswordResetCode(ctx context.Context, userId uint, code s
 // readPasswordResetCode returns the user reset code
 func (h *Handler) readPasswordResetCode(ctx context.Context, userId uint, code string) (*types.PasswordResetCode, error) {
 	pwcode := types.PasswordResetCode{}
-	err := h.Cache.Get(h.generatePasswordResetCodeStoreKey(userId, code), &pwcode)
-	if err != nil && err != cache.ErrCacheMiss {
+	err := h.Store.Get(h.generatePasswordResetCodeStoreKey(userId, code), &pwcode)
+	if err != nil && err != store.ErrCacheMiss {
 		return nil, err
 	}
 

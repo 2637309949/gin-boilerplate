@@ -2,8 +2,8 @@ package handler
 
 import (
 	"context"
-	"gin-boilerplate/comm/cache"
 	"gin-boilerplate/comm/http"
+	"gin-boilerplate/comm/store"
 	"gin-boilerplate/comm/viper"
 	"net/smtp"
 	"runtime"
@@ -13,7 +13,7 @@ import (
 )
 
 type Handler struct {
-	Cache cache.CacheStore
+	Store store.CacheStore
 }
 
 //Index ...

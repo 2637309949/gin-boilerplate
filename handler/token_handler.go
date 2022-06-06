@@ -171,11 +171,11 @@ func (h *Handler) CreateAuth(userid uint, td *types.TokenDetails) error {
 	rt := time.Unix(td.RtExpires, 0)
 	now := time.Now()
 
-	err := h.Cache.Set(td.AccessUUID, strconv.Itoa(int(userid)), at.Sub(now))
+	err := h.Store.Set(td.AccessUUID, strconv.Itoa(int(userid)), at.Sub(now))
 	if err != nil {
 		return err
 	}
-	err = h.Cache.Set(td.RefreshUUID, strconv.Itoa(int(userid)), rt.Sub(now))
+	err = h.Store.Set(td.RefreshUUID, strconv.Itoa(int(userid)), rt.Sub(now))
 	if err != nil {
 		return err
 	}
@@ -236,7 +236,7 @@ func (h *Handler) ExtractToken(r *http.Request) string {
 //FetchAuth ...
 func (h *Handler) FetchAuth(authD *types.AccessDetails) (int64, error) {
 	var userid int64
-	err := h.Cache.Get(authD.AccessUUID, &userid)
+	err := h.Store.Get(authD.AccessUUID, &userid)
 	if err != nil {
 		return 0, err
 	}
@@ -245,7 +245,7 @@ func (h *Handler) FetchAuth(authD *types.AccessDetails) (int64, error) {
 
 //DeleteAuth ...
 func (h *Handler) DeleteAuth(givenUUID string) error {
-	err := h.Cache.Delete(givenUUID)
+	err := h.Store.Delete(givenUUID)
 	if err != nil {
 		return err
 	}
