@@ -2,6 +2,16 @@ info:
   contact: {}
   license: {}
 paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: home index
+      produces:
+      - application/json
+      summary: Index
+      tags:
+      - index
   /api/v1/deleteArticle:
     post:
       consumes:

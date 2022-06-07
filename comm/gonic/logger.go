@@ -10,18 +10,17 @@ import (
 
 // defaultLogFormatter is the default log format function Logger middleware uses.
 var defaultLogFormatter = func(param gin.LogFormatterParams) string {
-	var methodColor, resetColor string
+	var methodColor string
 	if param.IsOutputColor() {
 		methodColor = param.MethodColor()
-		resetColor = param.ResetColor()
 	}
 
 	if param.Latency > time.Minute {
 		// Truncate in a golang < 1.8 safe way
 		param.Latency = param.Latency - param.Latency%time.Second
 	}
-	return fmt.Sprintf("%3d %s| %11v | %12s |%s %-5s %v\n%s",
-		param.StatusCode, resetColor,
+	return fmt.Sprintf("%3d | %4v | %12s |%s %-5s %v\n%s",
+		param.StatusCode,
 		param.Latency,
 		param.ClientIP,
 		methodColor, param.Method,
@@ -61,9 +60,6 @@ func LoggerWithConfig(conf gin.LoggerConfig) gin.HandlerFunc {
 		path := c.Request.URL.Path
 		raw := c.Request.URL.RawQuery
 
-		// Process request
-		c.Next()
-
 		// Log only when path is not being skipped
 		if _, ok := skip[path]; !ok {
 			param := gin.LogFormatterParams{
@@ -90,5 +86,9 @@ func LoggerWithConfig(conf gin.LoggerConfig) gin.HandlerFunc {
 
 			logger.Infof(c.Request.Context(), formatter(param))
 		}
+
+		// Process request
+		c.Next()
+
 	}
 }

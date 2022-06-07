@@ -4,6 +4,7 @@ import (
 	"context"
 	"gin-boilerplate/comm/broker"
 	"gin-boilerplate/comm/http"
+	"gin-boilerplate/comm/mark"
 	"gin-boilerplate/comm/store"
 	"gin-boilerplate/comm/viper"
 	"net/smtp"
@@ -14,16 +15,25 @@ import (
 )
 
 type Handler struct {
-	Store store.CacheStore
+	Store  store.CacheStore
 	Broker broker.Broker
 }
 
-//Index ...
+// ref: https://swaggo.github.io/swaggo.io/declarative_comments_format/api_operation.html
+// @Summary Index
+// @Description home index
+// @Tags index
+// @Accept  json
+// @Produce  json
+// @Router / [get]
 func (h *Handler) Index(ctx *gin.Context) {
+	var timemark mark.TimeMark
+	defer timemark.Init(ctx.Request.Context(), "Index")()
 	tk := gin.H{
 		"gin_boilerplate_version": "v1.0",
 		"go_version":              runtime.Version(),
 	}
+	timemark.Mark("runtime")
 	http.Success(ctx, http.FlatOption(tk))
 }
 
