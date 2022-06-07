@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"gin-boilerplate/comm/broker"
 	"gin-boilerplate/comm/http"
 	"gin-boilerplate/comm/store"
 	"gin-boilerplate/comm/viper"
@@ -14,6 +15,7 @@ import (
 
 type Handler struct {
 	Store store.CacheStore
+	Broker broker.Broker
 }
 
 //Index ...

@@ -3,12 +3,13 @@ package broker
 import (
 	"context"
 	"crypto/tls"
+	"gin-boilerplate/comm/codec"
 )
 
 type Options struct {
-	Addrs  []string
-	Secure bool
-
+	Addrs     []string
+	Secure    bool
+	Codec     codec.Marshaler
 	TLSConfig *tls.Config
 	// Other options for implementations of the interface
 	// can be stored in a context
@@ -30,6 +31,7 @@ type SubscribeOptions struct {
 	// receives a subset of messages.
 	Queue string
 
+	AutoAck bool
 	// Other options for implementations of the interface
 	// can be stored in a context
 	Context context.Context

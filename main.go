@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"gin-boilerplate/comm/broker"
 	"gin-boilerplate/comm/gonic"
 	"gin-boilerplate/comm/http"
 	"gin-boilerplate/comm/middles"
@@ -19,8 +20,8 @@ import (
 
 func main() {
 	//handler
-	todo := context.TODO()
-	h := handler.Handler{Store: store.DefaultStore}
+	ctx := context.Background()
+	h := handler.Handler{Store: store.DefaultStore, Broker: broker.DefaultBroker}
 	r := web.New(web.Mode(gin.ReleaseMode),
 		web.DataBase(viper.GetString("db.dialect"), viper.GetString("db.dns")),
 		web.Validator(new(gonic.DefaultValidator)),
@@ -60,5 +61,5 @@ func main() {
 	r.Handle(http.MethodDelete, "/api/v1/article/:id", middles.AuthMiddleware(h.TokenValid), h.DeleteArticle)
 
 	//start
-	r.Run(todo, fmt.Sprintf(":%v", viper.GetString("http.port")))
+	r.Run(ctx, fmt.Sprintf(":%v", viper.GetString("http.port")))
 }

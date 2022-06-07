@@ -4,7 +4,8 @@
 
 - TraceId/RequestId for all access
 - Standard restful response
-- Configurable cache middleware
+- Generic cache interface
+- Generic message subscription interface
 - Automatically generate Swagger documents
 - Metrics interface
 - Zero downtime restarts or upgrades
