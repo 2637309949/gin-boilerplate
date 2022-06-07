@@ -17,7 +17,7 @@ func init() {
 		lvl = InfoLevel
 	}
 
-	DefaultLogger = NewHelper(NewLogger(WithLevel(lvl)))
+	DefaultLogger = NewHelper(NewLogger(WithLevel(lvl), WithCallerSkipCount(2)))
 }
 
 type defaultLogger struct {

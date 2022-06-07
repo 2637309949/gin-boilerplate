@@ -9,6 +9,8 @@
 - Automatically generate Swagger documents
 - Metrics interface
 - Zero downtime restarts or upgrades
+- Time-consuming calculation
+- Logger with traceId and tracePath
 
 #### Login
 
@@ -32,3 +34,7 @@ http://192.168.202.128:8080/api/v1/token/refresh \
   "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
 }'
 ```
+
+#### Store
+
+#### Broker

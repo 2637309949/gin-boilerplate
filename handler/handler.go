@@ -28,7 +28,7 @@ type Handler struct {
 // @Router / [get]
 func (h *Handler) Index(ctx *gin.Context) {
 	var timemark mark.TimeMark
-	defer timemark.Init(ctx.Request.Context(), "Index")()
+	defer timemark.Init(ctx.Request.Context(), "Home")()
 	tk := gin.H{
 		"gin_boilerplate_version": "v1.0",
 		"go_version":              runtime.Version(),
