@@ -15,7 +15,9 @@ type TimeMark struct {
 func (t *TimeMark) Mark(format string, data ...interface{}) {
 	duration := time.Since(t.last)
 	desc := fmt.Sprintf(format, data...)
+	logger.Init(logger.WithCallerSkipCount(3))
 	logger.Infof(t.ctx, "%s duration:[%s]", desc, duration)
+	logger.Init(logger.WithCallerSkipCount(2))
 	t.last = time.Now()
 }
 
@@ -26,6 +28,8 @@ func (t *TimeMark) Init(ctx context.Context, format string, data ...interface{})
 	return func() {
 		desc := fmt.Sprintf(format, data...)
 		duration := time.Since(t.start)
+		logger.Init(logger.WithCallerSkipCount(3))
 		logger.Infof(t.ctx, "%s total duration:[%v]", desc, duration)
+		logger.Init(logger.WithCallerSkipCount(2))
 	}
 }

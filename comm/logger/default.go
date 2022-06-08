@@ -17,7 +17,7 @@ func init() {
 		lvl = InfoLevel
 	}
 
-	DefaultLogger = NewHelper(NewLogger(WithLevel(lvl), WithCallerSkipCount(2)))
+	DefaultLogger = NewHelper(NewLogger(WithLevel(lvl)))
 }
 
 type defaultLogger struct {
@@ -180,7 +180,7 @@ func NewLogger(opts ...Option) Logger {
 		Level:           TraceLevel,
 		Fields:          make(map[string]interface{}),
 		Out:             os.Stderr,
-		CallerSkipCount: 3,
+		CallerSkipCount: 2,
 		Context:         context.Background(),
 	}
 

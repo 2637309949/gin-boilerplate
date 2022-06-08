@@ -26,7 +26,7 @@ func main() {
 		web.DataBase(viper.GetString("db.dialect"), viper.GetString("db.dns")),
 		web.Validator(new(gonic.DefaultValidator)),
 		web.Middleware(gzip.Gzip(gzip.DefaultCompression),
-			middles.RequestIDMiddleware(),
+			middles.TraceMiddleware(),
 			gin.Recovery(),
 			gonic.Logger(),
 			middles.CORSMiddleware(),

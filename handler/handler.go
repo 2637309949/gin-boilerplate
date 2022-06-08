@@ -14,6 +14,7 @@ import (
 	"github.com/jordan-wright/email"
 )
 
+//Handler...
 type Handler struct {
 	Store  store.CacheStore
 	Broker broker.Broker
