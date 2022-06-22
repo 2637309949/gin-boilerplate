@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"gin-boilerplate/comm/broker"
-	"gin-boilerplate/comm/gonic"
 	"gin-boilerplate/comm/http"
 	"gin-boilerplate/comm/middles"
 	"gin-boilerplate/comm/store"
@@ -12,31 +11,20 @@ import (
 	"gin-boilerplate/comm/web"
 	"gin-boilerplate/handler"
 	"time"
-
-	"github.com/chenjiandongx/ginprom"
-	"github.com/gin-contrib/gzip"
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	//handler
-	ctx := context.Background()
+	ctx := context.TODO()
+	opts := []web.OptFunc{}
 	h := handler.Handler{Store: store.DefaultStore, Broker: broker.DefaultBroker}
-	r := web.New(web.Mode(gin.ReleaseMode),
-		web.DataBase(viper.GetString("db.dialect"), viper.GetString("db.dns")),
-		web.Validator(new(gonic.DefaultValidator)),
-		web.Middleware(gzip.Gzip(gzip.DefaultCompression),
-			middles.TraceMiddleware(),
-			gin.Recovery(),
-			gonic.Logger(),
-			middles.CORSMiddleware(),
-			ginprom.PromMiddleware(nil)),
-		web.Metrics("/metrics"),
-		web.Index(h.Index),
-		web.NoRoute(h.NoRoute),
-		web.Static("/public", "./public"),
-		web.Sql("./setup.sql"),
-		web.Swagger("handler"))
+	opts = append(opts, web.DataBase(viper.GetString("db.dialect"), viper.GetString("db.dns")))
+	opts = append(opts, web.Index(h.Index))
+	opts = append(opts, web.NoRoute(h.NoRoute))
+	opts = append(opts, web.Static("/public", "./public"))
+	opts = append(opts, web.Sql("./setup.sql"))
+	opts = append(opts, web.Swagger("handler"))
+	r := web.Default(opts...)
 
 	//User routes
 	r.Handle(http.MethodPost, "/api/v1/user/login", h.Login)

@@ -3,7 +3,9 @@ package web
 import (
 	"context"
 	"gin-boilerplate/comm/db"
+	"gin-boilerplate/comm/gonic"
 	"gin-boilerplate/comm/logger"
+	"gin-boilerplate/comm/middles"
 	"gin-boilerplate/comm/swagger/gen"
 	"net/http"
 	"os"
@@ -13,6 +15,7 @@ import (
 
 	"github.com/chenjiandongx/ginprom"
 	"github.com/fvbock/endless"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -86,8 +89,7 @@ func New(opts ...OptFunc) *Web {
 	r.Static(opt.Static.RelativePath, opt.Static.Root)
 
 	// gen api doc
-	gn := gen.New()
-	gc := gen.Config{
+	go gen.New().Build(&gen.Config{
 		SearchDir:          opt.Swagger,
 		MainAPIFile:        "../main.go",
 		PropNamingStrategy: "camelcase",
@@ -95,7 +97,14 @@ func New(opts ...OptFunc) *Web {
 		OutputDir:          "./",
 		ParseVendor:        true,
 		ParseDependency:    true,
-	}
-	go gn.Build(&gc)
+	})
 	return &Web{r}
+}
+
+func Default(opts ...OptFunc) *Web {
+	opts = append(opts, Mode(gin.ReleaseMode))
+	opts = append(opts, Validator(new(gonic.DefaultValidator)))
+	opts = append(opts, Metrics("/metrics"))
+	opts = append(opts, Middleware(gzip.Gzip(gzip.DefaultCompression), middles.TraceMiddleware(), gin.Recovery(), gonic.Logger(), middles.CORSMiddleware(), ginprom.PromMiddleware(nil)))
+	return New(opts...)
 }
