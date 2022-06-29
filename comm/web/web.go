@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -32,7 +33,10 @@ func resolveAddress(addr []string) string {
 		}
 		return ":8080"
 	case 1:
-		return addr[0]
+		if strings.Contains(addr[0], ":") {
+			return addr[0]
+		}
+		return ":" + addr[0]
 	default:
 		panic("too many parameters")
 	}

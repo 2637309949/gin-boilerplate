@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"gin-boilerplate/comm/broker"
 	"gin-boilerplate/comm/http"
 	"gin-boilerplate/comm/middles"
@@ -14,7 +13,6 @@ import (
 )
 
 func main() {
-	//handler
 	ctx := context.TODO()
 	opts := []web.OptFunc{}
 	h := handler.Handler{Store: store.DefaultStore, Broker: broker.DefaultBroker}
@@ -49,5 +47,5 @@ func main() {
 	r.Handle(http.MethodDelete, "/api/v1/article/:id", middles.AuthMiddleware(h.TokenValid), h.DeleteArticle)
 
 	//start
-	r.Run(ctx, fmt.Sprintf(":%v", viper.GetString("http.port")))
+	r.Run(ctx, viper.GetString("http.port"))
 }
