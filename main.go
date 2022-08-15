@@ -6,6 +6,7 @@ import (
 	"gin-boilerplate/comm/http"
 	"gin-boilerplate/comm/middles"
 	"gin-boilerplate/comm/store"
+	"gin-boilerplate/comm/util/ctx"
 	"gin-boilerplate/comm/viper"
 	"gin-boilerplate/comm/web"
 	"gin-boilerplate/handler"
@@ -13,18 +14,19 @@ import (
 )
 
 func main() {
-	ctx := context.TODO()
+	ctx := ctx.FromContext(context.TODO())
 	opts := []web.OptFunc{}
 	h := handler.Handler{Store: store.DefaultStore, Broker: broker.DefaultBroker}
 	opts = append(opts, web.DataBase(viper.GetString("db.dialect"), viper.GetString("db.dns")))
 	opts = append(opts, web.Index(h.Index))
 	opts = append(opts, web.NoRoute(h.NoRoute))
 	opts = append(opts, web.Static("/public", "./public"))
+	opts = append(opts, web.Template("./public/templates/*"))
 	opts = append(opts, web.Sql("./setup.sql"))
 	opts = append(opts, web.Swagger("handler"))
 	r := web.Default(opts...)
 
-	//User routes
+	// User routes
 	r.Handle(http.MethodPost, "/api/v1/user/login", h.Login)
 	r.Handle(http.MethodGet, "/api/v1/user/logout", h.Logout)
 	r.Handle(http.MethodPost, "/api/v1/user/register", h.Register)
@@ -36,16 +38,16 @@ func main() {
 	r.Handle(http.MethodPost, "/api/v1/user/sendPasswordResetEmail", h.SendPasswordResetEmail) //for sendPasswordResetEmail
 	r.Handle(http.MethodPost, "/api/v1/user/resetPassword", h.ResetPassword)                   //for resetPassword
 
-	//Auth routes
+	// Auth routes
 	r.Handle(http.MethodPost, "/api/v1/token/refresh", h.Refresh)
 
-	//Article routes
+	// Article routes
 	r.Handle(http.MethodPost, "/api/v1/article", middles.AuthMiddleware(h.TokenValid), h.InsertArticle)
 	r.Handle(http.MethodGet, "/api/v1/articles", middles.CachePage(h.Store, time.Minute), h.QueryArticle)
 	r.Handle(http.MethodGet, "/api/v1/article/:id", middles.CachePage(h.Store, time.Minute), h.QueryArticleDetail)
 	r.Handle(http.MethodPut, "/api/v1/article/:id", middles.AuthMiddleware(h.TokenValid), h.UpdateArticle)
 	r.Handle(http.MethodDelete, "/api/v1/article/:id", middles.AuthMiddleware(h.TokenValid), h.DeleteArticle)
 
-	//start
+	// start
 	r.Run(ctx, viper.GetString("http.port"))
 }

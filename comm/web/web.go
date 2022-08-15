@@ -76,24 +76,32 @@ func New(opts ...OptFunc) *Web {
 	var opt Option
 	for _, v := range opts {
 		v(&opt)
-
 	}
 
-	//db set up
-	db.SetDsn(opt.Dialect, opt.DNS)
-	db.AutoMigrate(db.GetDB())
-	db.Exec(opt.Sql)
+	// Dialect set up
+	if len(opt.Dialect) > 0 {
+		db.SetDsn(opt.Dialect, opt.DNS)
+		db.AutoMigrate(db.GetDB())
+	}
+	if len(opt.Sql) > 0 {
+		db.Exec(opt.Sql)
+	}
 
-	//web init
+	// web init
 	r := gin.New()
 	r.Use(opt.Middlewares...)
 	r.GET("/", opt.Index)
 	r.GET(opt.Metrics, ginprom.PromHandler(promhttp.Handler()))
 	r.NoRoute(opt.NoRoute)
-	r.Static(opt.Static.RelativePath, opt.Static.Root)
+	if len(opt.Static.RelativePath) > 0 {
+		r.Static(opt.Static.RelativePath, opt.Static.Root)
+	}
+	if len(opt.Template) > 0 {
+		r.LoadHTMLGlob(opt.Template)
+	}
 
-	// gen api doc
-	go gen.New().Build(&gen.Config{
+	// Build builds swagger json file  for given searchDir and mainAPIFile. Returns json
+	gen.Build(&gen.Config{
 		SearchDir:          opt.Swagger,
 		MainAPIFile:        "../main.go",
 		PropNamingStrategy: "camelcase",

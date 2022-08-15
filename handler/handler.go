@@ -29,18 +29,22 @@ type Handler struct {
 // @Router / [get]
 func (h *Handler) Index(ctx *gin.Context) {
 	var timemark mark.TimeMark
-	defer timemark.Init(ctx.Request.Context(), "Home")()
-	tk := gin.H{
+	defer timemark.Init(ctx.Request.Context(), "Index")()
+	timemark.Mark("runtime")
+	ctx.HTML(http.StatusOK, "index.tmpl", gin.H{
 		"gin_boilerplate_version": "v1.0",
 		"go_version":              runtime.Version(),
-	}
-	timemark.Mark("runtime")
-	http.Success(ctx, http.FlatOption(tk))
+	})
 }
 
 //NoRoute ...
 func (h *Handler) NoRoute(ctx *gin.Context) {
-	http.Fail(ctx, http.MsgOption("NotFound"), http.StatusOption(http.StatusNotFound))
+	var timemark mark.TimeMark
+	defer timemark.Init(ctx.Request.Context(), "NoRoute")()
+	timemark.Mark("NoRoute")
+	ctx.HTML(http.StatusOK, "notfund.tmpl", gin.H{
+		"noRoute": ctx.Request.URL.Path,
+	})
 }
 
 //NoRoute ...

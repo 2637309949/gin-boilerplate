@@ -15,9 +15,10 @@ type Option struct {
 		RelativePath string
 		Root         string
 	}
-	Swagger string
-	Metrics string
-	Sql     string
+	Swagger  string
+	Metrics  string
+	Template string
+	Sql      string
 }
 
 type OptFunc func(o *Option)
@@ -46,14 +47,14 @@ func Sql(file string) OptFunc {
 
 //Mode...
 func Mode(value string) OptFunc {
-	return func(o *Option) {
+	return func(_ *Option) {
 		gin.SetMode(value)
 	}
 }
 
 //Validator...
 func Validator(validator binding.StructValidator) OptFunc {
-	return func(o *Option) {
+	return func(_ *Option) {
 		binding.Validator = validator
 	}
 }
@@ -91,5 +92,12 @@ func Static(relativePath string, root string) OptFunc {
 func Metrics(m string) OptFunc {
 	return func(o *Option) {
 		o.Metrics = m
+	}
+}
+
+//Template...
+func Template(t string) OptFunc {
+	return func(o *Option) {
+		o.Template = t
 	}
 }
