@@ -44,7 +44,7 @@ func (h *Handler) QueryOptionset(ctx *gin.Context) {
 	where := models.Optionset{
 		Name: articleFilter.Name,
 	}
-	err := h.QueryOptionsetDB(ctx, session, &where, &lst, &totalCount)
+	err := h.QueryOptionsetDB(ctx.Request.Context(), session, &where, &lst, &totalCount)
 	timemark.Mark("QueryOptionsetDB")
 	if err != nil {
 		logger.Error(ctx.Request.Context(), err)
@@ -87,7 +87,7 @@ func (h *Handler) QueryOptionsetDetail(ctx *gin.Context) {
 		return
 	}
 
-	err := h.QueryOptionsetDetailDB(ctx, session, &where, &inOptionset)
+	err := h.QueryOptionsetDetailDB(ctx.Request.Context(), session, &where, &inOptionset)
 	timemark.Mark("QueryOptionsetDetailDB")
 	if err != nil {
 		logger.Error(ctx.Request.Context(), err)
@@ -123,7 +123,7 @@ func (h *Handler) InsertOptionset(ctx *gin.Context) {
 		Name: articleForm.Name,
 	}, models.Optionset{}
 	copier.Copy(&inOptionset, &articleForm)
-	err := h.QueryOptionsetDetailDB(ctx, session, &where, &inOptionset)
+	err := h.QueryOptionsetDetailDB(ctx.Request.Context(), session, &where, &inOptionset)
 	timemark.Mark("QueryOptionsetDetailDB")
 	if err == nil {
 		logger.Errorf(ctx.Request.Context(), "Record already exists")
@@ -131,7 +131,7 @@ func (h *Handler) InsertOptionset(ctx *gin.Context) {
 		return
 	}
 
-	err = h.InsertOptionsetDB(ctx, session, &inOptionset)
+	err = h.InsertOptionsetDB(ctx.Request.Context(), session, &inOptionset)
 	timemark.Mark("InsertOptionsetDB")
 	if err != nil {
 		logger.Error(ctx.Request.Context(), err)
@@ -172,7 +172,7 @@ func (h *Handler) UpdateOptionset(ctx *gin.Context) {
 	}
 	copier.Copy(&inOptionset, &articleForm)
 
-	err := h.UpdateOptionsetDB(ctx, session, &inOptionset)
+	err := h.UpdateOptionsetDB(ctx.Request.Context(), session, &inOptionset)
 	timemark.Mark("UpdateOptionsetDB")
 	if err != nil {
 		logger.Error(ctx.Request.Context(), err)
@@ -204,7 +204,7 @@ func (h *Handler) DeleteOptionset(ctx *gin.Context) {
 		return
 	}
 
-	err := h.DeleteOptionsetDB(ctx, session, &where)
+	err := h.DeleteOptionsetDB(ctx.Request.Context(), session, &where)
 	timemark.Mark("DeleteOptionsetDB")
 	if err != nil {
 		logger.Error(ctx.Request.Context(), err)

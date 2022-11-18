@@ -443,6 +443,7 @@ func (b *HttpRequest) DoRequest() (resp *http.Response, err error) {
 			if t.Proxy == nil {
 				t.Proxy = b.setting.Proxy
 			}
+			// t.DialContext
 			if t.Dial == nil {
 				t.Dial = TimeoutDialer(b.setting.ConnectTimeout, b.setting.ReadWriteTimeout)
 			}

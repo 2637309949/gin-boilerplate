@@ -40,7 +40,7 @@ func (h *Handler) QueryArticle(ctx *gin.Context) {
 	where, lst, totalCount := models.Article{
 		Title: articleFilter.Title,
 	}, []models.Article{}, int64(0)
-	err := h.QueryArticleDB(ctx, session, &where, &lst, &totalCount)
+	err := h.QueryArticleDB(ctx.Request.Context(), session, &where, &lst, &totalCount)
 	timemark.Mark("QueryArticleDB")
 	if err != nil {
 		logger.Error(ctx.Request.Context(), err)
@@ -82,7 +82,7 @@ func (h *Handler) QueryArticleDetail(ctx *gin.Context) {
 		return
 	}
 
-	err := h.QueryArticleDetailDB(ctx, session, &where, &inArticle)
+	err := h.QueryArticleDetailDB(ctx.Request.Context(), session, &where, &inArticle)
 	timemark.Mark("QueryArticleDetailDB")
 	if err != nil {
 		logger.Error(ctx.Request.Context(), err)
@@ -118,7 +118,7 @@ func (h *Handler) InsertArticle(ctx *gin.Context) {
 		Title: articleForm.Title,
 	}, models.Article{}
 	copier.Copy(&inArticle, &articleForm)
-	err := h.QueryArticleDetailDB(ctx, session, &where, &inArticle)
+	err := h.QueryArticleDetailDB(ctx.Request.Context(), session, &where, &inArticle)
 	timemark.Mark("QueryArticleDetailDB")
 	if err == nil {
 		logger.Errorf(ctx.Request.Context(), "Record already exists")
@@ -126,7 +126,7 @@ func (h *Handler) InsertArticle(ctx *gin.Context) {
 		return
 	}
 
-	err = h.InsertArticleDB(ctx, session, &inArticle)
+	err = h.InsertArticleDB(ctx.Request.Context(), session, &inArticle)
 	timemark.Mark("InsertArticleDB")
 	if err != nil {
 		logger.Error(ctx.Request.Context(), err)
@@ -167,7 +167,7 @@ func (h *Handler) UpdateArticle(ctx *gin.Context) {
 	}
 	copier.Copy(&inArticle, &articleForm)
 
-	err := h.UpdateArticleDB(ctx, session, &inArticle)
+	err := h.UpdateArticleDB(ctx.Request.Context(), session, &inArticle)
 	timemark.Mark("UpdateArticleDB")
 	if err != nil {
 		logger.Error(ctx.Request.Context(), err)
@@ -199,7 +199,7 @@ func (h *Handler) DeleteArticle(ctx *gin.Context) {
 		return
 	}
 
-	err := h.DeleteArticleDB(ctx, session, &where)
+	err := h.DeleteArticleDB(ctx.Request.Context(), session, &where)
 	timemark.Mark("DeleteArticleDB")
 	if err != nil {
 		logger.Error(ctx.Request.Context(), err)

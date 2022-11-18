@@ -40,7 +40,7 @@ func (h *Handler) Login(ctx *gin.Context) {
 	where, user := models.User{
 		Email: loginForm.Email,
 	}, models.User{}
-	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err != nil {
+	if err := h.QueryUserDetailDB(ctx.Request.Context(), session, &where, &user); err != nil {
 		if errors.Is(err, errors.ERecordNotFound) {
 			http.Fail(ctx, http.MsgOption("The account or password is incorrect"))
 			return
@@ -102,7 +102,7 @@ func (h *Handler) Register(ctx *gin.Context) {
 		Name:  registerForm.Name,
 		Email: registerForm.Email,
 	}
-	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err == nil {
+	if err := h.QueryUserDetailDB(ctx.Request.Context(), session, &where, &user); err == nil {
 		http.Fail(ctx, http.MsgOption("Email already exists"))
 		return
 	}
@@ -113,7 +113,7 @@ func (h *Handler) Register(ctx *gin.Context) {
 		return
 	}
 	user.Password = password
-	if err := h.InsertUserDB(ctx, session, &user); err != nil {
+	if err := h.InsertUserDB(ctx.Request.Context(), session, &user); err != nil {
 		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
@@ -171,7 +171,7 @@ func (h *Handler) UpdatePassword(ctx *gin.Context) {
 
 	where, user := models.User{}, models.User{}
 	where.ID = updatePasswordForm.UserId
-	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err != nil {
+	if err := h.QueryUserDetailDB(ctx.Request.Context(), session, &where, &user); err != nil {
 		if errors.Is(err, errors.ERecordNotFound) {
 			logger.Errorf(ctx.Request.Context(), "The account was not found")
 			http.Fail(ctx, http.MsgOption("The account was not found"))
@@ -194,7 +194,7 @@ func (h *Handler) UpdatePassword(ctx *gin.Context) {
 		return
 	}
 	user.Password = password
-	if err := h.UpdateUserDB(ctx, session, &user); err != nil {
+	if err := h.UpdateUserDB(ctx.Request.Context(), session, &user); err != nil {
 		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
@@ -224,7 +224,7 @@ func (h *Handler) SendVerificationEmail(ctx *gin.Context) {
 
 	where, user := models.User{}, models.User{}
 	where.Email = sendVerificationEmailRequestForm.Email
-	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err != nil {
+	if err := h.QueryUserDetailDB(ctx.Request.Context(), session, &where, &user); err != nil {
 		if errors.Is(err, errors.ERecordNotFound) {
 			http.Fail(ctx, http.MsgOption("The account was not found"))
 			return
@@ -277,7 +277,7 @@ func (h *Handler) VerifyEmail(ctx *gin.Context) {
 	where := models.User{}
 	where.ID = userId
 	user := models.User{}
-	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err != nil {
+	if err := h.QueryUserDetailDB(ctx.Request.Context(), session, &where, &user); err != nil {
 		if errors.Is(err, errors.ERecordNotFound) {
 			http.Fail(ctx, http.MsgOption("The account was not found"))
 			return
@@ -287,7 +287,7 @@ func (h *Handler) VerifyEmail(ctx *gin.Context) {
 		return
 	}
 	user.Verified = 1
-	if err := h.UpdateUserDB(ctx, session, &user); err != nil {
+	if err := h.UpdateUserDB(ctx.Request.Context(), session, &user); err != nil {
 		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
@@ -312,7 +312,7 @@ func (h *Handler) SendPasswordResetEmail(ctx *gin.Context) {
 	where := models.User{}
 	where.Email = sendPasswordResetEmailForm.Email
 	user := models.User{}
-	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err != nil {
+	if err := h.QueryUserDetailDB(ctx.Request.Context(), session, &where, &user); err != nil {
 		if errors.Is(err, errors.ERecordNotFound) {
 			http.Fail(ctx, http.MsgOption("The account was not found"))
 			return
@@ -364,7 +364,7 @@ func (h *Handler) ResetPassword(ctx *gin.Context) {
 	where := models.User{}
 	where.Email = resetPasswordRequestForm.Email
 	user := models.User{}
-	if err := h.QueryUserDetailDB(ctx, session, &where, &user); err != nil {
+	if err := h.QueryUserDetailDB(ctx.Request.Context(), session, &where, &user); err != nil {
 		if errors.Is(err, errors.ERecordNotFound) {
 			http.Fail(ctx, http.MsgOption("The account was not found"))
 			return
@@ -389,7 +389,7 @@ func (h *Handler) ResetPassword(ctx *gin.Context) {
 		return
 	}
 	user.Password = password
-	if err := h.UpdateUserDB(ctx, session, &user); err != nil {
+	if err := h.UpdateUserDB(ctx.Request.Context(), session, &user); err != nil {
 		logger.Error(ctx.Request.Context(), err)
 		http.Fail(ctx, http.MsgOption(err.Error()))
 		return
