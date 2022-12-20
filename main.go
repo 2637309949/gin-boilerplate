@@ -4,6 +4,7 @@ import (
 	"context"
 	"gin-boilerplate/comm/broker"
 	"gin-boilerplate/comm/http"
+	"gin-boilerplate/comm/logger"
 	"gin-boilerplate/comm/middles"
 	"gin-boilerplate/comm/store"
 	"gin-boilerplate/comm/util/ctx"
@@ -49,5 +50,8 @@ func main() {
 	r.Handle(http.MethodDelete, "/api/v1/article/:id", middles.AuthMiddleware(h.TokenValid), h.DeleteArticle)
 
 	// start
-	r.Run(ctx, viper.GetString("http.port"))
+	err := r.Run(ctx)
+	if err != nil {
+		logger.Fatal(ctx, err)
+	}
 }

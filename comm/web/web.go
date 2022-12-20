@@ -6,7 +6,7 @@ import (
 	"gin-boilerplate/comm/gonic"
 	"gin-boilerplate/comm/logger"
 	"gin-boilerplate/comm/middles"
-	"gin-boilerplate/comm/swagger/gen"
+	"gin-boilerplate/comm/viper"
 	"net/http"
 	"os"
 	"os/signal"
@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/chenjiandongx/ginprom"
-	"github.com/fvbock/endless"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -25,7 +24,7 @@ var (
 	DefaultBeforeBeginFunc = func(addr string) {}
 )
 
-func resolveAddress(addr []string) string {
+func resolveAddress(addr ...string) string {
 	switch len(addr) {
 	case 0:
 		if port := os.Getenv("PORT"); port != "" {
@@ -46,17 +45,29 @@ type Web struct {
 	*gin.Engine
 }
 
-func (w *Web) Run(ctx context.Context, addr ...string) (err error) {
-	address := resolveAddress(addr)
-	srv := endless.NewServer(address, w)
-	srv.BeforeBegin = DefaultBeforeBeginFunc
-	go func() {
-		logger.Infof(ctx, "Listen and serve %v/main on 0.0.0.0%v", syscall.Getpid(), address)
-		logger.Infof(ctx, "Exec `kill -1 %v` to graceful upgrade", syscall.Getpid())
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.Error(ctx, err)
+func (w *Web) listen(ctx context.Context, srv *http.Server) (err error) {
+	https := viper.GetBool("listen.https")
+	if https {
+		certFile, keyFile := viper.GetString("listen.certFile"), viper.GetString("listen.keyFile")
+		if err := srv.ListenAndServeTLS(certFile, keyFile); err != nil && err != http.ErrServerClosed {
+			logger.Fatal(ctx, err)
+			return err
 		}
-	}()
+	} else {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Fatal(ctx, err)
+			return err
+		}
+	}
+	return nil
+}
+
+func (w *Web) Run(ctx context.Context) (err error) {
+	address := resolveAddress(viper.GetString("listen.port"))
+	srv := NewServer(address, w)
+	logger.Infof(ctx, "%v listen and serve %v/main on 0.0.0.0%v", viper.GetString("name"), syscall.Getpid(), address)
+	logger.Infof(ctx, "exec `kill -1 %v` to graceful upgrade", syscall.Getpid())
+	go w.listen(ctx, &srv.Server)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
@@ -69,9 +80,9 @@ func (w *Web) Run(ctx context.Context, addr ...string) (err error) {
 		return err
 	}
 	logger.Info(ctx, "Server exiting")
+
 	return nil
 }
-
 func New(opts ...OptFunc) *Web {
 	var opt Option
 	for _, v := range opts {
@@ -100,16 +111,8 @@ func New(opts ...OptFunc) *Web {
 		r.LoadHTMLGlob(opt.Template)
 	}
 
-	// Build builds swagger json file  for given searchDir and mainAPIFile. Returns json
-	gen.Build(&gen.Config{
-		SearchDir:          opt.Swagger,
-		MainAPIFile:        "../main.go",
-		PropNamingStrategy: "camelcase",
-		MarkdownFilesDir:   "",
-		OutputDir:          "./",
-		ParseVendor:        true,
-		ParseDependency:    true,
-	})
+	//Build builds swagger json file  for given searchDir and mainAPIFile. Returns json
+	GenerageSwaggerDoc(opt.Swagger)
 	return &Web{r}
 }
 

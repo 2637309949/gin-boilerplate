@@ -1,5 +1,10 @@
-http:
-  port: 8080
+name: gin-boilerplate
+mode: dev
+listen:
+  https: true
+  port: 8888
+  certFile: server.crt
+  keyFile: server.key
 db:
   dialect: sqlite3
   dns: sqlite.db
